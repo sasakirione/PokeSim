@@ -107,6 +107,7 @@ class PokemonTypeV3(
         FAIRLY -> typeCompatibilityFairly(defense)
         NONE -> 1.0
         STELLAR -> 1.0
+        // 第6世代以降でのろいの？？？タイプが実装されたことはなし
         QUESTION -> throw NotSupportVersion("Type:??? not supported yet")
     }
 
