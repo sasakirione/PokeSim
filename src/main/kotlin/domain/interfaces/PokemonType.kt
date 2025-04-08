@@ -1,7 +1,7 @@
-package domain.`interface`
+package domain.interfaces
 
-import domain.entity.TypeEvent
 import domain.value.PokemonTypeValue
+import event.TypeEvent
 
 interface PokemonType {
     val originalTypes: List<PokemonTypeValue>

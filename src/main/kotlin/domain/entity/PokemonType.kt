@@ -1,8 +1,12 @@
 package domain.entity
 
-import domain.`interface`.PokemonType
+import domain.interfaces.PokemonType
 import domain.value.PokemonTypeValue
 import domain.value.PokemonTypeValue.*
+import event.TypeEvent
+import event.TypeEventAdd
+import event.TypeEventChange
+import event.TypeEventRemove
 import exception.NotSupportVersion
 
 /***
@@ -64,6 +68,15 @@ class PokemonTypeV3(
 
             is TypeEventAdd -> {
                 tempTypes.union(listOf(typeEvent.addType)).toList()
+            }
+
+            is TypeEventRemove -> {
+                val removedList = tempTypes.filter { x -> x != typeEvent.remove }.toList()
+                if (removedList.isEmpty()) {
+                    listOf(NONE)
+                } else {
+                    removedList
+                }
             }
         }
     }
@@ -316,14 +329,3 @@ class PokemonTypeV3(
     }
 }
 
-sealed class TypeEvent()
-
-/***
- * リベロやみずびたしなどタイプが指定の単タイプに変化
- */
-class TypeEventChange(val changeType: PokemonTypeValue) : TypeEvent()
-
-/***
- * ハロウィンやもりののろいなど指定のタイプを追加
- */
-class TypeEventAdd(val addType: PokemonTypeValue) : TypeEvent()
