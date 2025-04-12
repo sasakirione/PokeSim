@@ -17,6 +17,16 @@ A turn-based Pokémon battle simulator library written in Kotlin.
  - JDK 20+
  - Gradle (recommended build tool)
 
+## Features/Roadmap
+### Common
+ - [ ] Basic Battle Features
+   - [x] Basic Status Features
+   - [x] Basic Type Features
+   - [ ] Basic Move Features
+   - [ ] Basic Turn Features
+
+### Gem9 - Single
+ - [ ] Basic Terastal
 
 ## 🎮 Features/Roadmap
 ### Common
