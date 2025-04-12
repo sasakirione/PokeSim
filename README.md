@@ -1,4 +1,10 @@
 # 🐱‍🏍 PokéSim
+![GitHub issues](https://img.shields.io/github/issues/sasakirione/PokeSim)
+![GitHub forks](https://img.shields.io/github/forks/sasakirione/PokeSim)
+![GitHub stars](https://img.shields.io/github/stars/sasakirione/PokeSim)
+![GitHub license](https://img.shields.io/github/license/sasakirione/PokeSim)
+
+## 📗 Overview
 A turn-based Pokémon battle simulator written in Kotlin.
 
 
