@@ -9,8 +9,20 @@ import event.TypeEvent.TypeEventChange
 import event.TypeEvent.TypeEventRemove
 import exception.NotSupportVersion
 
-/***
- * 第6世代以降用のポケモンクラス
+/**
+ * A class representing the advanced type handling logic for Pokémon After 6th generation, including
+ * calculations for normal type matchups, Terastal mechanics, and specific type
+ * interactions.
+ *
+ * The class provides the ability to handle multiple Pokémon type interactions,
+ * manage Terastal forms, and compute damage multipliers based on various type factors.
+ * It incorporates a variety of type-specific multipliers to calculate type effectiveness.
+ *
+ * @property originalTypes The original types of a Pokémon before any transformations.
+ * @property tempTypes Temporary overriding types applied to a Pokémon.
+ * @property terastalTypes Types applied after Terastal transformation.
+ * @property isTerastal A flag denoting if the Pokémon is currently in Terastal state.
+ * @property specialDamageType Represents a unique damage type for specific conditions.
  */
 class PokemonTypeV3(
     override val originalTypes: List<PokemonTypeValue>,
@@ -19,6 +31,7 @@ class PokemonTypeV3(
     var isTerastal: Boolean = false,
     var specialDamageType: PokemonTypeValue = NONE,
 ) : PokemonType {
+
     override fun getTypeMatch(attack: PokemonTypeValue): Double {
         var magnification = if (tempTypes.contains(STELLAR)) {
             // タイプがステラの場合だけオリジナルのタイプで相性計算
@@ -58,6 +71,7 @@ class PokemonTypeV3(
     }
 
     override fun execEvent(typeEvent: TypeEvent) {
+        // Terastal type cannot change Type
         if (isTerastal) {
             return
         }
@@ -83,6 +97,7 @@ class PokemonTypeV3(
 
     override fun execReturn() {
         tempTypes = originalTypes.toList()
+        // Terastal type is keeping
         if (isTerastal) {
             tempTypes = listOf(terastalTypes)
         }
