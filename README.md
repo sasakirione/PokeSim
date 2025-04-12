@@ -1,18 +1,39 @@
 # 🐱‍🏍 PokéSim
+> [!NOTE]
+> 🚧 Work in Progress: The project is in its early stages and not yet functional. Stay tuned!
+
 ![GitHub issues](https://img.shields.io/github/issues/sasakirione/PokeSim)
 ![GitHub forks](https://img.shields.io/github/forks/sasakirione/PokeSim)
 ![GitHub stars](https://img.shields.io/github/stars/sasakirione/PokeSim)
 ![GitHub license](https://img.shields.io/github/license/sasakirione/PokeSim)
 
 ## 📗 Overview
-A turn-based Pokémon battle simulator written in Kotlin.
+A turn-based Pokémon battle simulator library written in Kotlin.
 
-
+`
 ## 🚀 Getting Started
 ### Requirements
  - Kotlin 2.x
  - JDK 20+
  - Gradle (recommended build tool)
+
+
+## 🎮 Features/Roadmap
+### Common
+ - [ ] Basic Battle Features
+   - [x] Basic Status Features
+   - [x] Basic Type Features
+   - [ ] Basic Move Features
+   - [ ] Basic Turn Features
+ - [ ] Pokemon Data Include(a few)
+ - [ ] Move Data Include(a few)
+ - [ ] Simple CLI
+
+### Gen8 - Single
+- [ ] Basic D-MAX
+
+### Gen9 - Single
+ - [ ] Basic Terastal`
 
 
 ## 🤝 Contributing
