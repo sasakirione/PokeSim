@@ -1,11 +1,11 @@
 package domain.entity
 
-import domain.interfaces.PokemonFigure
+import domain.interfaces.PokemonStatus
 import domain.value.EvV2
-import domain.value.FigureType
-import domain.value.FigureType.*
+import domain.value.StatusType
+import domain.value.StatusType.*
 import domain.value.IvV2
-import event.FigureEvent
+import event.StatusEvent
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
@@ -13,7 +13,7 @@ import kotlin.math.min
 /**
  * 第6世代以降のポケモンのステータス値クラス
  */
-class PokemonFigureV3(
+class PokemonStatusV3(
     /**
      * 努力値
      */
@@ -30,7 +30,7 @@ class PokemonFigureV3(
      * ステータス補正
      */
     val correction: PokemonFigureCorrection = PokemonFigureCorrection(),
-) : PokemonFigure {
+) : PokemonStatus {
     val realBaseH
         get() = (base.h.toInt() * 2 + iv.h.value + floor(ev.h.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 50 + 10
     val realBaseA
@@ -93,10 +93,10 @@ class PokemonFigureV3(
         return res.toInt()
     }
 
-    override fun execEvent(figureEvent: FigureEvent) {
-        when (figureEvent) {
-            is FigureEvent.FigureEventDown -> correction.updateCorrectionDown(figureEvent.step, figureEvent.figureType)
-            is FigureEvent.FigureEventUp -> correction.updateCorrectionUp(figureEvent.step, figureEvent.figureType)
+    override fun execEvent(statusEvent: StatusEvent) {
+        when (statusEvent) {
+            is StatusEvent.StatusEventDown -> correction.updateCorrectionDown(statusEvent.step, statusEvent.statusType)
+            is StatusEvent.StatusEventUp -> correction.updateCorrectionUp(statusEvent.step, statusEvent.statusType)
         }
     }
 
@@ -140,8 +140,8 @@ class PokemonFigureBase(val h: UInt, val a: UInt, val b: UInt, val c: UInt, val 
  * 値補正クラス
  */
 class PokemonFigureCorrection(var a: Int = 0, var b: Int = 0, var c: Int = 0, var d: Int = 0, var s: Int = 0) {
-    fun updateCorrectionUp(step: Int, figureType: FigureType) {
-        when (figureType) {
+    fun updateCorrectionUp(step: Int, statusType: StatusType) {
+        when (statusType) {
             H -> {}
             A -> {
                 a = min(a + step, 6)
@@ -165,8 +165,8 @@ class PokemonFigureCorrection(var a: Int = 0, var b: Int = 0, var c: Int = 0, va
         }
     }
 
-    fun updateCorrectionDown(step: Int, figureType: FigureType) {
-        when (figureType) {
+    fun updateCorrectionDown(step: Int, statusType: StatusType) {
+        when (statusType) {
             H -> {}
             A -> {
                 a = max(a - step, -6)

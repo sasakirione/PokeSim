@@ -4,9 +4,9 @@ import domain.interfaces.PokemonType
 import domain.value.PokemonTypeValue
 import domain.value.PokemonTypeValue.*
 import event.TypeEvent
-import event.TypeEventAdd
-import event.TypeEventChange
-import event.TypeEventRemove
+import event.TypeEvent.TypeEventAdd
+import event.TypeEvent.TypeEventChange
+import event.TypeEvent.TypeEventRemove
 import exception.NotSupportVersion
 
 /***

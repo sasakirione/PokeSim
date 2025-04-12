@@ -10,7 +10,7 @@
 ## 📗 Overview
 A turn-based Pokémon battle simulator library written in Kotlin.
 
-`
+
 ## 🚀 Getting Started
 ### Requirements
  - Kotlin 2.x
@@ -33,7 +33,7 @@ A turn-based Pokémon battle simulator library written in Kotlin.
 - [ ] Basic D-MAX
 
 ### Gen9 - Single
- - [ ] Basic Terastal`
+ - [ ] Basic Terastal
 
 
 ## 🤝 Contributing
