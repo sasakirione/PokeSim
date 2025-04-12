@@ -20,7 +20,7 @@ class PokemonTypeV3(
     var specialDamageType: PokemonTypeValue = NONE,
 ) : PokemonType {
     override fun getTypeMatch(attack: PokemonTypeValue): Double {
-        var magnification =  if (tempTypes.contains(STELLAR)) {
+        var magnification = if (tempTypes.contains(STELLAR)) {
             // タイプがステラの場合だけオリジナルのタイプで相性計算
             originalTypes.fold(1.0) { part, pokeType -> part * getNormalMagnification(attack, pokeType) }
         } else {
@@ -36,12 +36,12 @@ class PokemonTypeV3(
 
     override fun getMoveMagnification(moveType: PokemonTypeValue): Double {
         // タイプなしに一致補正が載ったら困る！
-        if (moveType == NORMAL){
+        if (moveType == NORMAL) {
             return 1.0
         }
         // テラスタルじゃない場合
-        if (!isTerastal){
-            return if (tempTypes.contains(moveType)){
+        if (!isTerastal) {
+            return if (tempTypes.contains(moveType)) {
                 1.5
             } else {
                 1.0
@@ -57,11 +57,11 @@ class PokemonTypeV3(
         }
     }
 
-    override fun execEvent(typeEvent: TypeEvent){
+    override fun execEvent(typeEvent: TypeEvent) {
         if (isTerastal) {
             return
         }
-        tempTypes = when(typeEvent){
+        tempTypes = when (typeEvent) {
             is TypeEventChange -> {
                 listOf(typeEvent.changeType)
             }
@@ -81,7 +81,7 @@ class PokemonTypeV3(
         }
     }
 
-    override fun execReturn(){
+    override fun execReturn() {
         tempTypes = originalTypes.toList()
         if (isTerastal) {
             tempTypes = listOf(terastalTypes)
@@ -91,8 +91,8 @@ class PokemonTypeV3(
     /**
      * テラスタルの処理を行う
      */
-    fun doTerastal(){
-        if (isTerastal || terastalTypes == NONE){
+    fun doTerastal() {
+        if (isTerastal || terastalTypes == NONE) {
             return
         }
         tempTypes = listOf(terastalTypes)

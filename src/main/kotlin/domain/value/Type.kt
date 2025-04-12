@@ -6,7 +6,7 @@ package domain.value
 enum class PokemonTypeValue {
     /**
      * タイプ：なし
-      */
+     */
     NONE,
 
     /**
