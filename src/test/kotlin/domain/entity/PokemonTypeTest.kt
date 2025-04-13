@@ -1,6 +1,8 @@
 package domain.entity
 
 import domain.value.PokemonTypeValue.*
+import event.TypeEvent.TypeEventAdd
+import event.TypeEvent.TypeEventChange
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import exception.NotSupportVersion
