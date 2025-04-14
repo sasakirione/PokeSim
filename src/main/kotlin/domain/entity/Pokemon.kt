@@ -8,8 +8,8 @@ import domain.value.MoveCategory
 import event.DamageInput
 import event.DamageResult
 import event.PokemonActionEvent
-import event.PokemonActionEvent.MoveActionDamage
-import event.PokemonActionEvent.MoveActionStatus
+import event.PokemonActionEvent.MoveAction.MoveActionDamage
+import event.PokemonActionEvent.MoveAction.MoveActionStatus
 import event.StatusEvent
 import event.TypeEvent
 import event.UserEventInput
@@ -33,6 +33,10 @@ class Pokemon(val name: String, val type: PokemonType, val status: PokemonStatus
                 return MoveActionDamage(move, attackIndex)
             }
         }
+    }
+
+    fun getFinalSpeed(): Int {
+        return status.getRealS()
     }
 
     // TODO: Depends on Java (Be Pure Kotlin someday)

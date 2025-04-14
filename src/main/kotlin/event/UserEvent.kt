@@ -7,8 +7,11 @@ sealed class UserEventInput(){
 }
 
 sealed class PokemonActionEvent(){
-    class MoveActionStatus(val move: Move): PokemonActionEvent()
-    class MoveActionDamage(val move: Move, val attackIndex: Int): PokemonActionEvent()
+    sealed class MoveAction(val move: Move): PokemonActionEvent(){
+        class MoveActionStatus(move: Move): MoveAction(move)
+        class MoveActionDamage(move: Move, val attackIndex: Int): MoveAction(move)
+    }
+
 }
 
 class UserEventReturn(val afterEventList: List<PokemonEvent>)
