@@ -5,10 +5,14 @@ import domain.value.EvV2
 import domain.value.StatusType
 import domain.value.StatusType.*
 import domain.value.IvV2
+import domain.value.MoveCategory
+import domain.value.MoveCategory.*
+import event.DamageInput
 import event.StatusEvent
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Represents the third version of a Pokémon status calculation class after 6th generation.
@@ -142,6 +146,27 @@ class PokemonStatusV3(
         }
         return res.toInt()
     }
+
+    override fun moveAttack(moveCategory: MoveCategory): Int {
+        return when (moveCategory) {
+            PHYSICAL -> getRealA(false)
+            SPECIAL -> getRealC(false)
+            else -> 0
+        }
+    }
+
+    override fun calculateDamage(input: DamageInput, typeCompatibility: Double): Int{
+        val damage1 = when (input.move.category){
+            PHYSICAL -> input.attackIndex / getRealB()
+            SPECIAL -> input.attackIndex / getRealD()
+            STATUS -> return 0
+        }
+        val finalDamage = (((damage1 / 50) + 2) * randomCorrection() * typeCompatibility).roundToInt()
+        return finalDamage
+    }
+
+    private fun randomCorrection(): Double =
+        (85..100).random() * 0.01
 
     override fun execEvent(statusEvent: StatusEvent) {
         when (statusEvent) {

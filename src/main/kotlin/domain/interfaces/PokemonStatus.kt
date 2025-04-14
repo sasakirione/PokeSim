@@ -1,5 +1,7 @@
 package domain.interfaces
 
+import domain.value.MoveCategory
+import event.DamageInput
 import event.StatusEvent
 
 /**
@@ -60,6 +62,10 @@ interface PokemonStatus {
      * @return The final Speed stat.
      */
     fun getRealS(isDirect: Boolean = false): Int
+
+    fun calculateDamage(input: DamageInput, typeCompatibility: Double): Int
+
+    fun moveAttack(moveCategory: MoveCategory): Int
 
     /**
      * Executes additional logic related to stat modification events.
