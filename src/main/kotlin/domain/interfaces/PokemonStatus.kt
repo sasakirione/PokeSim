@@ -63,8 +63,24 @@ interface PokemonStatus {
      */
     fun getRealS(isDirect: Boolean = false): Int
 
+    /**
+     * Calculates the damage inflicted during a move based on input parameters such as the move's category, attack index,
+     * and type compatibility. The damage calculation considers different handling for physical, special, and status moves.
+     *
+     * @param input The damage input, containing details about the move and its attack index.
+     * @param typeCompatibility A multiplier that adjusts the damage based on the compatibility of the move's type
+     *                          against the target's type.
+     * @return The integer value of the calculated damage. Returns `0` if the move category is `STATUS`.
+     */
     fun calculateDamage(input: DamageInput, typeCompatibility: Double): Int
 
+    /**
+     * Calculates the attack power of the Pokémon based on the move category.
+     *
+     * @param moveCategory The category of the move, which determines the stat used for attack calculation.
+     *                     It can be PHYSICAL, SPECIAL, or STATUS.
+     * @return The calculated attack power as an integer. Returns 0 if the move category is STATUS or undefined.
+     */
     fun moveAttack(moveCategory: MoveCategory): Int
 
     /**
