@@ -6,10 +6,7 @@ import event.DamageResult
 import event.PokemonActionEvent.MoveAction
 import event.UserEventInput
 import event.UserEventReturn
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.launch
-import kotlin.coroutines.EmptyCoroutineContext
 
 class BattleServiceTemp(val side1Pokemon: Pokemon, val side2Pokemon: Pokemon) {
 
@@ -30,16 +27,14 @@ class BattleServiceTemp(val side1Pokemon: Pokemon, val side2Pokemon: Pokemon) {
         return false
     }
 
-    fun startBattle() {
-        CoroutineScope(EmptyCoroutineContext).launch {
-            while (true) {
-                val userAction1 = BattleServiceObserver.UserAction1First ?: break
-                val userAction2 = BattleServiceObserver.UserAction2First ?: break
-                val input1 = userAction1.invoke().await()
-                val input2 = userAction2.invoke().await()
-                val isFinish = executeTurn(input1, input2)
-                if (isFinish) break
-            }
+    suspend fun startBattle() {
+        while (true) {
+            val userAction1 = BattleServiceObserver.UserAction1First ?: break
+            val userAction2 = BattleServiceObserver.UserAction2First ?: break
+            val input1 = userAction1.invoke().await()
+            val input2 = userAction2.invoke().await()
+            val isFinish = executeTurn(input1, input2)
+            if (isFinish) break
         }
     }
 

@@ -22,11 +22,7 @@ class SingleBattleG9: SuspendingCliktCommand() {
         // Display available moves for player 1
         echo("\nPlayer 1's moves:")
         // Based on PokemonFactory, we know there are 2 moves
-        for (i in 0..1) {
-            val move = pokemon1.pokemonMove.getMove(i)
-            echo("${i + 1}. ${move.name} (Type: ${move.type}, Power: ${move.power})")
-        }
-
+        echo(pokemon1.getTextOfMoveList())
         // Create an action handler for player 1 that properly processes input
         val action1: () -> Deferred<UserEventInput> = {
             val deferred = CompletableDeferred<UserEventInput>()

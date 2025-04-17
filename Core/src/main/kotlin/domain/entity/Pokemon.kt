@@ -70,4 +70,8 @@ class Pokemon(val name: String, val type: PokemonType, val status: PokemonStatus
             }
         }
     }
+
+    fun getTextOfMoveList(): String {
+        return pokemonMove.getTextOfList()
+    }
 }
