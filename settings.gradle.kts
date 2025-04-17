@@ -3,3 +3,6 @@ plugins {
 }
 rootProject.name = "PokeSim"
 
+
+include("core")
+include("Cli")
