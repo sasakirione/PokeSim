@@ -10,8 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Cli" />
-            <option value="$PROJECT_DIR$/cli" />
-            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/Core" />
           </set>
         </option>
       </GradleProjectSettings>

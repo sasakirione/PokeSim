@@ -4,5 +4,5 @@ plugins {
 rootProject.name = "PokeSim"
 
 
-include("core")
+include("Core")
 include("Cli")
