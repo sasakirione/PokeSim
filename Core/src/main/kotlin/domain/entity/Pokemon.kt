@@ -20,7 +20,7 @@ import kotlin.math.floor
 
 class Pokemon(val name: String, val type: PokemonType, val status: PokemonStatus, val hp: PokemonHp, val pokemonMove: PokemonMove, val level: Int) {
     fun getAction(input: UserEventInput): PokemonActionEvent {
-        return when (input) {
+        when (input) {
             is UserEventInput.MoveSelect -> {
                 val move = pokemonMove.getMove(input.moveIndex)
                 if (move.category == MoveCategory.STATUS) {
