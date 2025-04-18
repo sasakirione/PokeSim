@@ -20,14 +20,14 @@ A turn-based Pokémon battle simulator library written in Kotlin.
 
 ## 🎮 Features/Roadmap
 ### Common
- - [ ] Basic Battle Features
+ - [x] Basic Battle Features
    - [x] Basic Status Features
    - [x] Basic Type Features
    - [x] Basic Move Features
-   - [ ] Basic Turn Features
+   - [x] Basic Turn Features
  - [ ] Pokemon Data Include(a few)
  - [ ] Move Data Include(a few)
- - [ ] Simple CLI
+ - [x] Simple CLI
  - [ ] Basic Nature Features
  - [ ] Basic Good Features
 
