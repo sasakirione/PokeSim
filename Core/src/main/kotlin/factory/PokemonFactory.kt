@@ -70,7 +70,7 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
 
     /**
      * Creates a Pokémon from a configuration.
-     * This is a higher-order function that takes a configuration and returns a Pokemon.
+     * This is a higher-order function that takes a configuration and returns a Pokémon.
      */
     private fun createPokemonFromConfig(config: PokemonConfig): Pokemon {
         // Create type
@@ -129,7 +129,7 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
         }
         val pokemonMoves = PokemonMoveV3(moves)
 
-        // Create and return Pokemon
+        // Create and return Pokémon
         return Pokemon(config.name, type, status, hp, pokemonMoves, config.level)
     }
 

@@ -1,11 +1,11 @@
 package service
 
 import domain.entity.Pokemon
-import event.DamageInput
-import event.DamageResult
-import event.PokemonActionEvent.MoveAction
-import event.UserEventInput
-import event.UserEventReturn
+import event.ActionEvent
+import event.DamageEventInput
+import event.DamageEventResult
+import event.UserEvent
+import event.UserEventResult
 import kotlinx.coroutines.Deferred
 
 /**
@@ -55,7 +55,7 @@ class BattleService(
     private data class Player(
         val id: Int,
         val pokemon: Pokemon,
-        val action: MoveAction
+        val action: ActionEvent.ActionEventMove
     ) {
         val name: String get() = "Player $id"
     }
@@ -64,7 +64,7 @@ class BattleService(
      * Executes a single turn of the battle.
      * @return true if the battle is finished, false otherwise
      */
-    fun executeTurn(side1Input: UserEventInput, side2Input: UserEventInput): Boolean {
+    fun executeTurn(side1Input: UserEvent, side2Input: UserEvent): Boolean {
         logger.logWithNewLine("--- Turn Start ---")
         logPokemonStatus()
 
@@ -73,7 +73,7 @@ class BattleService(
         val side2Action = side2Pokemon.getAction(side2Input)
 
         // Early return if either action is not a move action
-        if (side1Action !is MoveAction || side2Action !is MoveAction) return false
+        if (side1Action !is ActionEvent.ActionEventMove || side2Action !is ActionEvent.ActionEventMove) return false
 
         // Create player objects
         val player1 = Player(1, side1Pokemon, side1Action)
@@ -171,23 +171,23 @@ class BattleService(
         val attackerAction = attacker.action
 
         // Only handle damage moves
-        if (attackerAction !is MoveAction.MoveActionDamage) return false
+        if (attackerAction !is ActionEvent.ActionEventMove.ActionEventMoveDamage) return false
 
         // Calculate damage
         val defenderPokemon = defender.pokemon
         val initialHp = defenderPokemon.hp.hp
-        val damageInput = DamageInput(attackerAction.move, attackerAction.attackIndex)
+        val damageInput = DamageEventInput(attackerAction.move, attackerAction.attackIndex)
         val result = defenderPokemon.calculateDamage(damageInput)
 
         // Apply action results
-        attacker.pokemon.applyAction(UserEventReturn(result.eventList))
+        attacker.pokemon.applyAction(UserEventResult(result.eventList))
 
         // Log attack results
         val damageDealt = (initialHp - defenderPokemon.hp.hp).toInt()
         logAttackResult(attacker, defender, attackerAction.move.name, damageDealt, initialHp.toInt())
 
         // Check if defender fainted
-        if (result is DamageResult.Dead) {
+        if (result is DamageEventResult.DamageEventResultDead) {
             logger.logWithNewLine("${defender.name}'s ${defender.pokemon.name} fainted!")
 
             // Determine which side needs to switch Pokémon
@@ -244,12 +244,7 @@ class BattleService(
 // For backward compatibility
 typealias BattleServiceTemp = BattleService
 
-// Constructor for backward compatibility with single Pokémon
-fun BattleService(side1Pokemon: Pokemon, side2Pokemon: Pokemon, logger: BattleLogger = DefaultBattleLogger()): BattleService {
-    return BattleService(listOf(side1Pokemon), listOf(side2Pokemon), logger)
-}
-
-typealias User1stActionFunc = () -> Deferred<UserEventInput>
+typealias User1stActionFunc = () -> Deferred<UserEvent>
 
 object BattleServiceObserver {
     var UserAction1First: User1stActionFunc? = null

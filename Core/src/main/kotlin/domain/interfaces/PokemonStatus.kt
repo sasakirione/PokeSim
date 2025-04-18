@@ -1,7 +1,7 @@
 package domain.interfaces
 
 import domain.value.MoveCategory
-import event.DamageInput
+import event.DamageEventInput
 import event.StatusEvent
 
 /**
@@ -72,12 +72,12 @@ interface PokemonStatus {
      *                          against the target's type.
      * @return The integer value of the calculated damage. Returns `0` if the move category is `STATUS`.
      */
-    fun calculateDamage(input: DamageInput, typeCompatibility: Double): Int
+    fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int
 
     /**
      * Calculates the attack power of the Pokémon based on the move category.
      *
-     * @param moveCategory The category of the move, which determines the stat used for attack calculation.
+     * @param moveCategory The category of the move, which determines the status used for attack calculation.
      *                     It can be PHYSICAL, SPECIAL, or STATUS.
      * @return The calculated attack power as an integer. Returns 0 if the move category is STATUS or undefined.
      */

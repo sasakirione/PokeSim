@@ -7,7 +7,7 @@ import domain.value.StatusType.*
 import domain.value.IvV2
 import domain.value.MoveCategory
 import domain.value.MoveCategory.*
-import event.DamageInput
+import event.DamageEventInput
 import event.StatusEvent
 import kotlin.math.floor
 import kotlin.math.max
@@ -15,7 +15,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
- * Represents the third version of a Pokémon status calculation class after 6th generation.
+ * Represents the third version of a Pokémon status calculation class after the 6th generation.
  *
  * It takes into account the Pokémon's effort values (EV), individual values (IV),
  * base stats, and status corrections to calculate actual stat values.
@@ -103,7 +103,7 @@ class PokemonStatusV3(
     }
 
     override fun getRealA(isDirect: Boolean): Int {
-        var res = if (isDirect) {
+        val res = if (isDirect) {
             realBaseA
         } else {
             realBaseA * correction.getCorrectionA()
@@ -112,7 +112,7 @@ class PokemonStatusV3(
     }
 
     override fun getRealB(isDirect: Boolean): Int {
-        var res = if (isDirect) {
+        val res = if (isDirect) {
             realBaseB
         } else {
             realBaseB * correction.getCorrectionB()
@@ -121,7 +121,7 @@ class PokemonStatusV3(
     }
 
     override fun getRealC(isDirect: Boolean): Int {
-        var res = if (isDirect) {
+        val res = if (isDirect) {
             realBaseC
         } else {
             realBaseC * correction.getCorrectionC()
@@ -130,7 +130,7 @@ class PokemonStatusV3(
     }
 
     override fun getRealD(isDirect: Boolean): Int {
-        var res = if (isDirect) {
+        val res = if (isDirect) {
             realBaseD
         } else {
             realBaseD * correction.getCorrectionD()
@@ -139,7 +139,7 @@ class PokemonStatusV3(
     }
 
     override fun getRealS(isDirect: Boolean): Int {
-        var res = if (isDirect) {
+        val res = if (isDirect) {
             realBaseS
         } else {
             realBaseS * correction.getCorrectionS()
@@ -155,7 +155,7 @@ class PokemonStatusV3(
         }
     }
 
-    override fun calculateDamage(input: DamageInput, typeCompatibility: Double): Int{
+    override fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int{
         val damage1 = when (input.move.category){
             PHYSICAL -> input.attackIndex / getRealB()
             SPECIAL -> input.attackIndex / getRealD()
@@ -230,10 +230,10 @@ class PokemonFigureIvV3(val h: IvV2, val a: IvV2, val b: IvV2, val c: IvV2, val 
  * @constructor Creates a new instance of PokemonStatusBase.
  * @param h The base hit points (HP) value of the Pokémon. It determines the amount of damage the Pokémon can take before fainting.
  * @param a The base attack (A) value of the Pokémon. It influences the damage the Pokémon deals with physical moves.
- * @param b The base defense (B) value of the Pokémon. It determines the resistance to damage from physical moves.
+ * @param b The base defence (B) value of the Pokémon. It determines the resistance to damage from physical moves.
  * @param c The base special attack (C) value of the Pokémon. It influences the damage the Pokémon deals with special moves.
- * @param d The base special defense (D) value of the Pokémon. It determines the resistance to damage from special moves.
- * @param s The base speed (S) value of the Pokémon. It determines the order in which Pokémon act during a battle.
+ * @param d The base special defence (D) value of the Pokémon. It determines the resistance to damage from special moves.
+ * @param s The base speed (S) value of the Pokémon. It determines the order in which Pokémon acts during a battle.
  */
 class PokemonStatusBase(val h: UInt, val a: UInt, val b: UInt, val c: UInt, val d: UInt, val s: UInt)
 
@@ -246,11 +246,11 @@ class PokemonStatusBase(val h: UInt, val a: UInt, val b: UInt, val c: UInt, val 
  * @constructor Creates an instance of `PokemonStatusCorrection` with optional initial values for
  * correction metrics.
  *
- * @param a Correction value for Attack status type.
- * @param b Correction value for Defense status type.
- * @param c Correction value for Special Attack status type.
- * @param d Correction value for Special Defense status type.
- * @param s Correction value for Speed status type.
+ * @param a Correction value for an Attack status type.
+ * @param b Correction value for a Defense status type.
+ * @param c Correction value for a Special Attack status type.
+ * @param d Correction value for a Special Defense status type.
+ * @param s Correction value for a Speed status type.
  */
 class PokemonStatusCorrection(var a: Int = 0, var b: Int = 0, var c: Int = 0, var d: Int = 0, var s: Int = 0) {
     /**
@@ -258,7 +258,7 @@ class PokemonStatusCorrection(var a: Int = 0, var b: Int = 0, var c: Int = 0, va
      * The correction value cannot exceed a maximum limit of 6.
      *
      * @param step The amount by which the correction value should be increased.
-     * @param statusType The type of status value to update (e.g., Attack, Defense, Speed, etc.).
+     * @param statusType The type of status value to update (e.g. Attack, Defense, Speed, etc.).
      */
     fun updateCorrectionUp(step: Int, statusType: StatusType) {
         when (statusType) {
@@ -290,7 +290,7 @@ class PokemonStatusCorrection(var a: Int = 0, var b: Int = 0, var c: Int = 0, va
      * The correction value cannot drop below the minimum limit of -6.
      *
      * @param step The amount by which the correction value should be decreased.
-     * @param statusType The type of status value to update (e.g., Attack, Defense, Speed, etc.).
+     * @param statusType The type of status value to update (e.g. Attack, Defense, Speed, etc.).
      */
     fun updateCorrectionDown(step: Int, statusType: StatusType) {
         when (statusType) {

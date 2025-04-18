@@ -18,7 +18,7 @@ enum class StatusType {
      * Represents the "A" type in Pokémon-related calculations.
      *
      * Usually corresponds to the Attack attribute in Pokémon status values.
-     * It is a part of the `StatusType` enum, which is used for categorizing different status value types.
+     * It is a part of the `StatusType` enum, which is used for categorising different status value types.
      */
     A,
 
@@ -26,7 +26,7 @@ enum class StatusType {
      * Represents the "B" type in Pokémon-related calculations.
      *
      * Commonly corresponds to the Defense attribute in Pokémon status values.
-     * It is a part of the `StatusType` enum, which categorizes different Pokémon status value types.
+     * It is a part of the `StatusType` enum, which categorises different Pokémon status value types.
      */
     B,
 
@@ -41,7 +41,7 @@ enum class StatusType {
     /**
      * Represents the "D" type in Pokémon-related calculations.
      *
-     * This type typically corresponds to the special defense (SpDefense) attribute in Pokémon status values.
+     * This type typically corresponds to the special defence (SpDefense) attribute in Pokémon status values.
      * It is part of the `StatusType` enum used to classify various Pokémon status value types.
      */
     D,
@@ -50,13 +50,13 @@ enum class StatusType {
      * Represents the "S" type in Pokémon-related calculations.
      *
      * This type typically corresponds to the Speed attribute in Pokémon status values.
-     * It is a part of the `StatusType` enum, which categorizes various Pokémon status value types.
+     * It is a part of the `StatusType` enum, which categorises various Pokémon status value types.
      */
     S
 }
 
 /**
- * Value object representing effort value after 6th generation
+ * Value object representing effort value after the 6th generation
  *
  * Effort values taking values from 0 to 252
  */

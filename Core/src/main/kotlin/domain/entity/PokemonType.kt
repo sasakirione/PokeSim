@@ -86,10 +86,8 @@ class PokemonTypeV3(
 
             is TypeEventRemove -> {
                 val removedList = tempTypes.filter { x -> x != typeEvent.remove }.toList()
-                if (removedList.isEmpty()) {
+                removedList.ifEmpty {
                     listOf(NONE)
-                } else {
-                    removedList
                 }
             }
         }

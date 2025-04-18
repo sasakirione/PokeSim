@@ -5,7 +5,7 @@ import factory.PokemonFactory
 /**
  * Interface for loading Pokémon data from custom sources.
  * This interface allows the application to retrieve Pokémon configuration data
- * from various sources (e.g., in-memory, database, API, file system).
+ * from various sources (e.g. in-memory, database, API, file system).
  */
 interface PokemonDataSource {
     /**
