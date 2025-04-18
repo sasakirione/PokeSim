@@ -55,7 +55,8 @@ class SingleBattleG9: SuspendingCliktCommand() {
         BattleServiceObserver.UserAction1First = action1
         BattleServiceObserver.UserAction2First = action2
 
-        val battle = BattleServiceTemp(pokemon1, pokemon2)
+        val logger = CliBattleLogger(this)
+        val battle = BattleServiceTemp(pokemon1, pokemon2, logger)
 
         // Start the battle
         echo("\nBattle starting...")
