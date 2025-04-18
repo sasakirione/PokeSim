@@ -8,13 +8,14 @@ import domain.entity.PokemonStatusBase
 import domain.entity.PokemonStatusEvV3
 import domain.entity.PokemonStatusV3
 import domain.entity.PokemonTypeV3
+import domain.interfaces.PokemonDataSource
 import domain.value.EvV2
 import domain.value.IvV2
 import domain.value.Move
 import domain.value.MoveCategory
 import domain.value.PokemonTypeValue
 
-object PokemonFactory {
+class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonDataSource()) {
     /**
      * Data class to hold Pokémon configuration parameters
      */
@@ -53,18 +54,18 @@ object PokemonFactory {
 
     /**
      * Creates a Pokémon based on the given ID.
-     * Uses a functional approach to select and create the appropriate Pokemon.
+     * Uses the configured data source to retrieve the Pokémon configuration.
+     *
+     * @param pokemonId The ID of the Pokémon to create.
+     * @return The created Pokémon instance.
      */
     fun getPokemon(pokemonId: Int): Pokemon {
-        // Map of Pokemon creators indexed by ID
-        val pokemonCreators = mapOf(
-            1 to ::createAlcremie,
-            2 to ::createGengar,
-            3 to ::createPikachu
-        )
+        // Get the Pokémon configuration from the data source or use Alcremie as default
+        val config = dataSource.getPokemonConfig(pokemonId) ?: dataSource.getPokemonConfig(1)
+            ?: throw IllegalStateException("Default Pokémon (ID: 1) not found in data source")
 
-        // Get the creator function for the given ID or default to Alcremie
-        return pokemonCreators.getOrDefault(pokemonId, ::createAlcremie)()
+        // Create and return the Pokémon from the configuration
+        return createPokemonFromConfig(config)
     }
 
     /**
@@ -132,61 +133,4 @@ object PokemonFactory {
         return Pokemon(config.name, type, status, hp, pokemonMoves, config.level)
     }
 
-    /**
-     * Creates an Alcremie Pokemon.
-     * This was the original implementation of getPokemon.
-     */
-    fun createAlcremie(): Pokemon {
-        val config = PokemonConfig(
-            name = "Alcremie",
-            types = listOf(PokemonTypeValue.FAIRLY),
-            terastalType = PokemonTypeValue.FIRE,
-            baseStats = BaseStats(65u, 60u, 75u, 110u, 121u, 64u),
-            evs = StatDistribution(252, 0, 0, 252, 0, 4),
-            moves = listOf(
-                MoveConfig("Dazzling Gleam", PokemonTypeValue.FAIRLY, MoveCategory.SPECIAL, 80, 100),
-                MoveConfig("Mystical Fire", PokemonTypeValue.FIRE, MoveCategory.SPECIAL, 85, 100)
-            )
-        )
-
-        return createPokemonFromConfig(config)
-    }
-
-    /**
-     * Creates a Gengar Pokemon.
-     */
-    private fun createGengar(): Pokemon {
-        val config = PokemonConfig(
-            name = "Gengar",
-            types = listOf(PokemonTypeValue.GHOST, PokemonTypeValue.POISON),
-            terastalType = PokemonTypeValue.GHOST,
-            baseStats = BaseStats(60u, 65u, 60u, 130u, 75u, 110u),
-            evs = StatDistribution(0, 0, 0, 252, 4, 252),
-            moves = listOf(
-                MoveConfig("Shadow Ball", PokemonTypeValue.GHOST, MoveCategory.SPECIAL, 80, 100),
-                MoveConfig("Sludge Bomb", PokemonTypeValue.POISON, MoveCategory.SPECIAL, 90, 100)
-            )
-        )
-
-        return createPokemonFromConfig(config)
-    }
-
-    /**
-     * Creates a Pikachu Pokémon.
-     */
-    private fun createPikachu(): Pokemon {
-        val config = PokemonConfig(
-            name = "Pikachu",
-            types = listOf(PokemonTypeValue.ELECTRIC),
-            terastalType = PokemonTypeValue.ELECTRIC,
-            baseStats = BaseStats(35u, 55u, 40u, 50u, 50u, 90u),
-            evs = StatDistribution(0, 0, 0, 252, 0, 252),
-            moves = listOf(
-                MoveConfig("Thunderbolt", PokemonTypeValue.ELECTRIC, MoveCategory.SPECIAL, 90, 100),
-                MoveConfig("Iron Tail", PokemonTypeValue.STEEL, MoveCategory.PHYSICAL, 100, 75)
-            )
-        )
-
-        return createPokemonFromConfig(config)
-    }
 }

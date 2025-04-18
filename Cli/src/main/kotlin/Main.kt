@@ -13,8 +13,9 @@ class SingleBattleG9: SuspendingCliktCommand() {
         echo("Start Battle(Regulation Gen9 Single Battle)")
 
         // Create different Pokémon for each side
-        val pokemon1 = PokemonFactory.getPokemon(1)
-        val pokemon2 = PokemonFactory.getPokemon(2)
+        val pokemonFactory = PokemonFactory()
+        val pokemon1 = pokemonFactory.getPokemon(1)
+        val pokemon2 = pokemonFactory.getPokemon(2)
 
         echo("Player 1's Pokémon: ${pokemon1.name}")
         echo("Player 2's Pokémon: ${pokemon2.name}")
