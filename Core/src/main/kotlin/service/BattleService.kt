@@ -122,6 +122,17 @@ class BattleService(
             // Execute inputs and get results
             val input1 = userAction1.invoke().await()
             val input2 = userAction2.invoke().await()
+
+            if (input1 is UserEvent.UserEventGiveUp) {
+                logger.log("Player 2 wins!")
+                break
+            }
+
+            if (input2 is UserEvent.UserEventGiveUp) {
+                logger.log("Player 1 wins!")
+                break
+            }
+
             val isBattleFinished = executeTurn(input1, input2)
 
             if (isBattleFinished) {
