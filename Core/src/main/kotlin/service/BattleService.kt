@@ -90,7 +90,7 @@ class BattleService(
     }
 
     /**
-     * Starts the battle and continues until all Pokémon on one side faint or there's no action.
+     * Starts the battle and continues until all Pokémon on one side faint, or there's no action.
      */
     suspend fun startBattle() {
         logger.logWithNewLine("=== Battle Start ===")
