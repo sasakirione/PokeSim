@@ -55,7 +55,7 @@ class BattleService(
     private data class Player(
         val id: Int,
         val pokemon: Pokemon,
-        val action: ActionEvent.ActionEventMove
+        val action: ActionEvent
     ) {
         val name: String get() = "Player $id"
     }
@@ -72,10 +72,38 @@ class BattleService(
         val side1Action = side1Pokemon.getAction(side1Input)
         val side2Action = side2Pokemon.getAction(side2Input)
 
-        // Early return if either action is not a move action
-        if (side1Action !is ActionEvent.ActionEventMove || side2Action !is ActionEvent.ActionEventMove) return false
+        // Handle Pokémon change actions first
+        val isChangedPokemon1 = handlePokemonChangeAction(1, side1Action)
+        val isChangedPokemon2 = handlePokemonChangeAction(2, side2Action)
+        if (isChangedPokemon1 || isChangedPokemon2) {
+            logPokemonStatus()
+            logger.logWithNewLine("--- Turn End ---")
+            return false
+        }
 
-        // Create player objects
+        // If both actions are not move actions, end the turn
+        if (side1Action !is ActionEvent.ActionEventMove && side2Action !is ActionEvent.ActionEventMove) {
+            logger.log("--- Turn End ---")
+            return false
+        }
+
+        // If one player is changing Pokémon and the other is attacking, only process the attack
+        if (side1Action !is ActionEvent.ActionEventMove) {
+            // Only player 2 is attacking
+            executeAttack(Player(2, side2Pokemon, side2Action), Player(1, side1Pokemon, side1Action))
+            logger.log("--- Turn End ---")
+            return false
+        }
+
+        if (side2Action !is ActionEvent.ActionEventMove) {
+            // Only player 1 is attacking
+            executeAttack(Player(1, side1Pokemon, side1Action), Player(2, side2Pokemon, side2Action))
+            logger.log("--- Turn End ---")
+            return false
+        }
+
+        // Both players are using moves
+        //  to Create player objects
         val player1 = Player(1, side1Pokemon, side1Action)
         val player2 = Player(2, side2Pokemon, side2Action)
 
@@ -87,6 +115,37 @@ class BattleService(
 
         logger.log("--- Turn End ---")
         return battleResult
+    }
+
+    /**
+     * Handles a Pokémon change action for the specified player.
+     * @param playerId The ID of the player (1 or 2)
+     * @param action The action to handle
+     * @return true if the action was handled successfully, false otherwise.
+     */
+    private fun handlePokemonChangeAction(playerId: Int, action: ActionEvent): Boolean {
+        if (action !is ActionEvent.ActionEventPokemonChange) return false
+
+        val pokemonIndex = action.pokemonIndex
+
+        if (playerId == 1) {
+            // Check if the index is valid and the Pokémon is not fainted
+            if (pokemonIndex >= 0 && pokemonIndex < side1Pokemons.size && !side1Pokemons[pokemonIndex].hp.isDead()) {
+                currentSide1PokemonIndex = pokemonIndex
+                logger.logWithNewLine("Player 1 changed to ${side1Pokemon.name}!")
+            } else {
+                logger.logWithNewLine("Player 1 failed to change Pokemon!")
+            }
+        } else {
+            // Check if the index is valid and the Pokémon is not fainted
+            if (pokemonIndex >= 0 && pokemonIndex < side2Pokemons.size && !side2Pokemons[pokemonIndex].hp.isDead()) {
+                currentSide2PokemonIndex = pokemonIndex
+                logger.logWithNewLine("Player 2 changed to ${side2Pokemon.name}!")
+            } else {
+                logger.logWithNewLine("Player 2 failed to change Pokemon!")
+            }
+        }
+        return true
     }
 
     /**

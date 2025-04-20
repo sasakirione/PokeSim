@@ -25,16 +25,16 @@ A turn-based Pokémon battle simulator library written in Kotlin.
    - [x] Basic Type Features
    - [x] Basic Move Features
    - [x] Basic Turn Features
- - [ ] Pokemon Data Include(a few)
+ - [ ] Pokémon Data Include(a few)
  - [ ] Move Data Include(a few)
  - [x] Simple CLI
  - [ ] Basic Nature Features
  - [ ] Basic Good Features
 
-### Gen8 - Single
+### Gen8—Single
 - [ ] Basic D-MAX
 
-### Gen9 - Single
+### Gen9—Single
  - [ ] Basic Terastal
 
 
@@ -59,4 +59,4 @@ This project is licensed under the MIT Licence.
 ## 🙏 Disclaimer
 
 All Pokémon names, data, and related intellectual property belong to Nintendo, GAME FREAK, and The Pokémon Company.
-This project is an unofficial fan work and is not affiliated with or endorsed by the official Pokémon franchise.
+This project is an unofficial fan job and is not affiliated with or endorsed by the official Pokémon franchise.

@@ -2,7 +2,7 @@ import com.github.ajalt.clikt.command.SuspendingCliktCommand
 import com.github.ajalt.clikt.command.main
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import event.UserEventInput
+import event.UserEvent
 import factory.PokemonFactory
 import service.BattleServiceObserver
 import service.BattleServiceTemp
@@ -25,8 +25,8 @@ class SingleBattleG9: SuspendingCliktCommand() {
         // Based on PokemonFactory, we know there are 2 moves
         echo(pokemon1.getTextOfMoveList())
         // Create an action handler for player 1 that properly processes input
-        val action1: () -> Deferred<UserEventInput> = {
-            val deferred = CompletableDeferred<UserEventInput>()
+        val action1: () -> Deferred<UserEvent> = {
+            val deferred = CompletableDeferred<UserEvent>()
             echo("\nPlayer 1, select a move (1-2):")
             var moveIndex: Int
             try {
@@ -39,17 +39,17 @@ class SingleBattleG9: SuspendingCliktCommand() {
                 echo("Invalid input. Using move 1.")
                 moveIndex = 0
             }
-            deferred.complete(UserEventInput.MoveSelect(moveIndex))
+            deferred.complete(UserEvent.UserEventMoveSelect(moveIndex))
             deferred
         }
 
         // Create an action handler for player 2 (computer)
-        val action2: () -> Deferred<UserEventInput> = {
-            val deferred = CompletableDeferred<UserEventInput>()
+        val action2: () -> Deferred<UserEvent> = {
+            val deferred = CompletableDeferred<UserEvent>()
             // Computer randomly selects a move
             val moveIndex = (0..1).random()
             echo("\nPlayer 2 selects move ${moveIndex + 1}")
-            deferred.complete(UserEventInput.MoveSelect(moveIndex))
+            deferred.complete(UserEvent.UserEventMoveSelect(moveIndex))
             deferred
         }
 
@@ -57,7 +57,7 @@ class SingleBattleG9: SuspendingCliktCommand() {
         BattleServiceObserver.UserAction2First = action2
 
         val logger = CliBattleLogger(this)
-        val battle = BattleServiceTemp(pokemon1, pokemon2, logger)
+        val battle = BattleServiceTemp(listOf(pokemon1), listOf(pokemon2), logger)
 
         // Start the battle
         echo("\nBattle starting...")

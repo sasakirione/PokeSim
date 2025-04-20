@@ -52,6 +52,13 @@ class Pokemon(val name: String, val type: PokemonType, val status: PokemonStatus
                 val attackIndex = fiveOutOverFiveIn(damage2 * type.getMoveMagnification(move.type))
                 return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, attackIndex)
             }
+            is UserEvent.UserEventPokemonChange -> {
+                return ActionEvent.ActionEventPokemonChange(input.pokemonIndex)
+            }
+            else -> {
+                // Default case for other event types like UserEventGiveUp
+                throw IllegalArgumentException("Unsupported user event: ${input::class.simpleName}")
+            }
         }
     }
 

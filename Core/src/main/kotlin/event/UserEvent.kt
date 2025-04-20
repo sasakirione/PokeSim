@@ -68,6 +68,16 @@ sealed class ActionEvent : PokemonEvent() {
          */
         class ActionEventMoveDamage(move: Move, val attackIndex: Int): ActionEventMove(move)
     }
+
+    /**
+     * Represents an action to change the active Pokémon during battle.
+     *
+     * This action is triggered when a player decides to switch their active Pokémon
+     * with another Pokémon from their team.
+     *
+     * @param pokemonIndex The index of the Pokémon to switch to in the player's team.
+     */
+    class ActionEventPokemonChange(val pokemonIndex: Int): ActionEvent()
 }
 
 /**

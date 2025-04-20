@@ -4,7 +4,7 @@ import domain.value.EvV2
 import domain.value.IvV2
 import domain.value.MoveCategory
 import domain.value.StatusType
-import event.DamageInput
+import event.DamageEventInput
 import event.StatusEvent
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -233,17 +233,17 @@ class PokemonStatusV3Test {
         )
 
         // Test damage calculation with PHYSICAL move
-        val physicalDamageInput = DamageInput(physicalMove, 120)
+        val physicalDamageInput = DamageEventInput(physicalMove, 120)
         val physicalDamage = status.calculateDamage(physicalDamageInput, 1.0)
         assertTrue(physicalDamage > 0)
 
         // Test damage calculation with SPECIAL move
-        val specialDamageInput = DamageInput(specialMove, 60)
+        val specialDamageInput = DamageEventInput(specialMove, 60)
         val specialDamage = status.calculateDamage(specialDamageInput, 1.0)
         assertTrue(specialDamage > 0)
 
         // Test damage calculation with STATUS move (should be 0)
-        val statusDamageInput = DamageInput(statusMove, 0)
+        val statusDamageInput = DamageEventInput(statusMove, 0)
         val statusDamage = status.calculateDamage(statusDamageInput, 1.0)
         assertEquals(0, statusDamage)
 
