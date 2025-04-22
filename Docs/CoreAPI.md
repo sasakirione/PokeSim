@@ -40,7 +40,8 @@ The API is designed with a domain-driven approach and uses an event-based system
 ### Factories
 
 - **PokemonFactory**: Creates Pokémon instances based on configurations.
-- **DefaultPokemonDataSource**: Provides default Pokémon data.
+- **DefaultPokemonDataSource**: Provides default Pokémon data with a small set of predefined Pokémon.
+- **PokeApiDataSource**: Fetches Pokémon data from the PokeAPI, supporting multiple environments.
 
 ### Event System
 
@@ -256,4 +257,25 @@ class CustomDataSource : PokemonDataSource {
 
 val factory = PokemonFactory(CustomDataSource())
 val myPokemon = factory.getPokemon(1)
+```
+
+### Using the PokeAPI Data Source
+
+```kotlin
+// Create a PokeApiDataSource with the default (PRODUCTION) environment
+val pokeApiDataSource = PokeApiDataSource()
+
+// Or specify a different environment
+val stagingDataSource = PokeApiDataSource(PokeApiDataSource.Environment.STAGING)
+val developmentDataSource = PokeApiDataSource(PokeApiDataSource.Environment.DEVELOPMENT)
+
+// Create a factory with the PokeAPI data source
+val factory = PokemonFactory(pokeApiDataSource)
+
+// Get Pokémon from the PokeAPI
+val pikachu = factory.getPokemon(25) // Pikachu (ID 25 in the PokeAPI)
+val charizard = factory.getPokemon(6) // Charizard (ID 6 in the PokeAPI)
+
+// Create a battle with Pokémon from the PokeAPI
+val battleService = BattleService(pikachu, charizard)
 ```
