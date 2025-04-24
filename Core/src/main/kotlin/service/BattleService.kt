@@ -63,6 +63,11 @@ class BattleService(
      */
     fun executeTurn(side1Input: UserEvent, side2Input: UserEvent): Boolean {
         logger.logWithNewLine("--- Turn Start ---")
+
+        // Apply held item effects at the start of the turn
+        side1Pokemon.heldItem.onTurnStart(side1Pokemon)
+        side2Pokemon.heldItem.onTurnStart(side2Pokemon)
+
         logPokemonStatus()
 
         // Convert user inputs to Pokémon actions
@@ -74,12 +79,14 @@ class BattleService(
         val isChangedPokemon2 = handlePokemonChangeAction(2, side2Action)
         if (isChangedPokemon1 || isChangedPokemon2) {
             logPokemonStatus()
+            applyEndOfTurnItemEffects()
             logger.logWithNewLine("--- Turn End ---")
             return false
         }
 
         // If both actions are not move actions, end the turn
         if (side1Action !is ActionEvent.ActionEventMove && side2Action !is ActionEvent.ActionEventMove) {
+            applyEndOfTurnItemEffects()
             logger.log("--- Turn End ---")
             return false
         }
@@ -88,6 +95,7 @@ class BattleService(
         if (side1Action !is ActionEvent.ActionEventMove) {
             // Only player 2 is attacking
             executeAttack(Player(2, side2Pokemon, side2Action), Player(1, side1Pokemon, side1Action))
+            applyEndOfTurnItemEffects()
             logger.log("--- Turn End ---")
             return false
         }
@@ -95,6 +103,7 @@ class BattleService(
         if (side2Action !is ActionEvent.ActionEventMove) {
             // Only player 1 is attacking
             executeAttack(Player(1, side1Pokemon, side1Action), Player(2, side2Pokemon, side2Action))
+            applyEndOfTurnItemEffects()
             logger.log("--- Turn End ---")
             return false
         }
@@ -110,6 +119,7 @@ class BattleService(
         // Execute attacks in order
         val battleResult = executeAttackSequence(firstPlayer, secondPlayer)
 
+        applyEndOfTurnItemEffects()
         logger.log("--- Turn End ---")
         return battleResult
     }
@@ -293,6 +303,14 @@ class BattleService(
         logger.log("${attacker.name}'s ${attacker.pokemon.name} used $moveName!")
         logger.log("Damage dealt: $damageDealt")
         logger.log("${defender.name}'s ${defender.pokemon.name} HP: ${defender.pokemon.hp.hp}/${(initialHp + damageDealt).toUInt()}")
+    }
+
+    /**
+     * Applies held item effects at the end of a turn.
+     */
+    private fun applyEndOfTurnItemEffects() {
+        side1Pokemon.heldItem.onTurnEnd(side1Pokemon)
+        side2Pokemon.heldItem.onTurnEnd(side2Pokemon)
     }
 
     /**

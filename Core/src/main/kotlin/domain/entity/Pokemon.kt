@@ -4,7 +4,10 @@ import domain.interfaces.PokemonHp
 import domain.interfaces.PokemonMove
 import domain.interfaces.PokemonStatus
 import domain.interfaces.PokemonType
+import domain.value.Item
 import domain.value.MoveCategory
+import domain.value.NoItem
+import domain.value.StatType
 import event.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -29,7 +32,8 @@ class Pokemon(
     val status: PokemonStatus,
     val hp: PokemonHp,
     val pokemonMove: PokemonMove,
-    val level: Int
+    val level: Int,
+    val heldItem: Item = NoItem
 ) {
     /**
      * Processes a user event and converts it into an appropriate battle action.
@@ -51,7 +55,14 @@ class Pokemon(
                 val damage1 = floor(level * 0.4 + 2)
                 val damage2 = floor(damage1 * move.power * power)
                 val attackIndex = fiveOutOverFiveIn(damage2 * type.getMoveMagnification(move.type))
-                return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, attackIndex)
+
+                // Create damage event input
+                var damageEventInput = DamageEventInput(move, attackIndex)
+
+                // Apply held item effects to outgoing damage
+                damageEventInput = heldItem.modifyOutgoingDamage(this, damageEventInput)
+
+                return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, damageEventInput.attackIndex)
             }
 
             is UserEvent.UserEventPokemonChange -> {
@@ -74,7 +85,9 @@ class Pokemon(
      * @return The final calculated speed stat as an integer
      */
     fun getFinalSpeed(): Int {
-        return status.getRealS()
+        val baseSpeed = status.getRealS()
+        // Apply held item effects to speed stat
+        return heldItem.modifyStat(this, StatType.SPEED, baseSpeed)
     }
 
     // TODO: Depends on Java (Be Pure Kotlin someday)
@@ -100,13 +113,22 @@ class Pokemon(
      * @return A DamageEventResult indicating whether the Pokémon is still alive or has fainted
      */
     fun calculateDamage(input: DamageEventInput): DamageEventResult {
-        val typeCompatibility = type.getTypeMatch(input.move.type)
-        val damage = status.calculateDamage(input, typeCompatibility)
+        // Apply held item effects to incoming damage
+        var modifiedInput = heldItem.modifyIncomingDamage(this, input)
+
+        val typeCompatibility = type.getTypeMatch(modifiedInput.move.type)
+        val damage = status.calculateDamage(modifiedInput, typeCompatibility)
         hp.takeDamage(damage.toUInt())
+
+        var result: DamageEventResult
         if (hp.isDead()) {
-            return DamageEventResult.DamageEventResultDead(emptyList())
+            result = DamageEventResult.DamageEventResultDead(emptyList())
+        } else {
+            result = DamageEventResult.DamageEventResultAlive(emptyList())
         }
-        return DamageEventResult.DamageEventResultAlive(emptyList())
+
+        // Apply held item effects after damage calculation
+        return heldItem.afterDamage(this, result)
     }
 
     /**

@@ -265,7 +265,7 @@ class PokemonStatusV3Test {
             nature = Nature.JOLLY
         )
 
-        // Speed should be increased by 10% (100 * 1.1 = 110)
+        // The Speed should be increased by 10% (100 * 1.1 = 110)
         assertEquals(132, jollyStatus.realBaseS.toInt())
         // Special Attack should be decreased by 10% (100 * 0.9 = 90)
         assertEquals(108, jollyStatus.realBaseC.toInt())

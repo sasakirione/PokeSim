@@ -28,8 +28,8 @@ A turn-based Pokémon battle simulator library written in Kotlin.
  - [ ] Pokémon Data Include(a few)
  - [ ] Move Data Include(a few)
  - [x] Simple CLI
- - [ ] Basic Nature Features
- - [ ] Basic Good Features
+ - [x] Basic Nature Features
+ - [x] Basic Good Features
 
 ### Gen8—Single
 - [ ] Basic D-MAX
