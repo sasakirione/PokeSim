@@ -1,11 +1,7 @@
 package service
 
 import domain.entity.Pokemon
-import event.ActionEvent
-import event.DamageEventInput
-import event.DamageEventResult
-import event.UserEvent
-import event.UserEventResult
+import event.*
 import kotlinx.coroutines.Deferred
 
 /**
@@ -13,7 +9,7 @@ import kotlinx.coroutines.Deferred
  * This implementation uses functional programming principles.
  */
 class BattleService(
-    val side1Pokemons: List<Pokemon>, 
+    val side1Pokemons: List<Pokemon>,
     val side2Pokemons: List<Pokemon>,
     private val logger: BattleLogger = DefaultBattleLogger()
 ) {
@@ -51,6 +47,7 @@ class BattleService(
         }
         return false // No more Pokémon available
     }
+
     // Data class to represent a player in the battle
     private data class Player(
         val id: Int,

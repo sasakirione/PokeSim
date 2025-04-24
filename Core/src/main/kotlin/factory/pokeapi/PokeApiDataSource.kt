@@ -18,7 +18,7 @@ import kotlinx.serialization.json.Json
  * This implementation supports multiple environments through the Environment enum.
  */
 class PokeApiDataSource(private val environment: Environment = Environment.PRODUCTION) : PokemonDataSource {
-    
+
     /**
      * Enum representing different environments for the PokeAPI.
      * Each environment has its own base URL.
@@ -28,7 +28,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
         STAGING("https://beta.pokeapi.co/api/v2/"),
         DEVELOPMENT("http://localhost:8000/api/v2/")
     }
-    
+
     // Create HTTP client with JSON serialization
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -38,12 +38,12 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             })
         }
     }
-    
+
     /**
      * Cache of Pokemon configurations to avoid repeated API calls
      */
     private val pokemonConfigCache = mutableMapOf<Int, PokemonFactory.PokemonConfig?>()
-    
+
     /**
      * Retrieves a Pokémon configuration by its ID from the PokeAPI.
      *
@@ -55,37 +55,37 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
         if (pokemonConfigCache.containsKey(pokemonId)) {
             return pokemonConfigCache[pokemonId]
         }
-        
+
         // Fetch from API if not in cache
         return runBlocking {
             try {
                 // Fetch Pokemon data
                 val pokemonResponse: PokemonResponse = client.get("${environment.baseUrl}pokemon/$pokemonId").body()
-                
+
                 // Fetch move data for the first two moves (or fewer if the Pokemon has fewer moves)
                 val moveResponses = pokemonResponse.moves.take(2).map { moveSlot ->
                     client.get(moveSlot.move.url).body<MoveResponse>()
                 }
-                
+
                 // Convert to PokemonConfig
                 val config = convertToPokemonConfig(pokemonResponse, moveResponses)
-                
+
                 // Cache the result
                 pokemonConfigCache[pokemonId] = config
-                
+
                 config
             } catch (e: Exception) {
                 // Log error and return null if API call fails
                 println("Error fetching Pokemon with ID $pokemonId: ${e.message}")
-                
+
                 // Cache the null result to avoid repeated failed API calls
                 pokemonConfigCache[pokemonId] = null
-                
+
                 null
             }
         }
     }
-    
+
     /**
      * Checks if a Pokémon with the given ID exists in the PokeAPI.
      *
@@ -97,11 +97,11 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
         if (pokemonConfigCache.containsKey(pokemonId)) {
             return pokemonConfigCache[pokemonId] != null
         }
-        
+
         // If not in cache, try to fetch it
         return getPokemonConfig(pokemonId) != null
     }
-    
+
     /**
      * Converts PokeAPI response to PokemonConfig.
      */
@@ -113,10 +113,10 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
         val types = pokemonResponse.types.map { typeSlot ->
             convertToPokemonTypeValue(typeSlot.type.name)
         }
-        
+
         // Use the first type as the terastal type (could be randomized or configurable in the future)
         val terastalType = types.firstOrNull() ?: PokemonTypeValue.NORMAL
-        
+
         // Convert stats
         val baseStats = PokemonFactory.BaseStats(
             hp = getStatValue(pokemonResponse.stats, "hp").toUInt(),
@@ -126,7 +126,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             spDef = getStatValue(pokemonResponse.stats, "special-defense").toUInt(),
             spd = getStatValue(pokemonResponse.stats, "speed").toUInt()
         )
-        
+
         // Create default EVs (could be randomized or configurable in the future)
         val evs = PokemonFactory.StatDistribution(
             hp = 0,
@@ -136,7 +136,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             spDef = 4,
             spd = 252
         )
-        
+
         // Convert moves
         val moves = moveResponses.map { moveResponse ->
             PokemonFactory.MoveConfig(
@@ -148,7 +148,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
                 priority = moveResponse.priority
             )
         }
-        
+
         // Create and return PokemonConfig
         return PokemonFactory.PokemonConfig(
             name = pokemonResponse.name.replaceFirstChar { it.uppercase() },
@@ -159,14 +159,14 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             moves = moves
         )
     }
-    
+
     /**
      * Gets a stat value from the stats list.
      */
     private fun getStatValue(stats: List<PokemonStatResponse>, statName: String): Int {
         return stats.find { it.stat.name == statName }?.baseStat ?: 50
     }
-    
+
     /**
      * Converts a PokeAPI type name to PokemonTypeValue.
      */
@@ -193,7 +193,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             else -> PokemonTypeValue.NORMAL
         }
     }
-    
+
     /**
      * Converts a PokeAPI damage class to MoveCategory.
      */

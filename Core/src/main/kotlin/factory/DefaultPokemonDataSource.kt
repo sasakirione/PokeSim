@@ -2,11 +2,9 @@ package factory
 
 import domain.interfaces.PokemonDataSource
 import domain.value.MoveCategory
+import domain.value.Nature
 import domain.value.PokemonTypeValue
-import factory.PokemonFactory.BaseStats
-import factory.PokemonFactory.MoveConfig
-import factory.PokemonFactory.PokemonConfig
-import factory.PokemonFactory.StatDistribution
+import factory.PokemonFactory.*
 
 /**
  * Default implementation of PokemonDataSource that stores Pokémon data in memory.
@@ -53,7 +51,8 @@ class DefaultPokemonDataSource : PokemonDataSource {
             moves = listOf(
                 MoveConfig("Dazzling Gleam", PokemonTypeValue.FAIRLY, MoveCategory.SPECIAL, 80, 100),
                 MoveConfig("Mystical Fire", PokemonTypeValue.FIRE, MoveCategory.SPECIAL, 85, 100)
-            )
+            ),
+            nature = Nature.MODEST
         )
     }
 
@@ -70,7 +69,8 @@ class DefaultPokemonDataSource : PokemonDataSource {
             moves = listOf(
                 MoveConfig("Shadow Ball", PokemonTypeValue.GHOST, MoveCategory.SPECIAL, 80, 100),
                 MoveConfig("Sludge Bomb", PokemonTypeValue.POISON, MoveCategory.SPECIAL, 90, 100)
-            )
+            ),
+            nature = Nature.TIMID
         )
     }
 
@@ -87,7 +87,8 @@ class DefaultPokemonDataSource : PokemonDataSource {
             moves = listOf(
                 MoveConfig("Thunderbolt", PokemonTypeValue.ELECTRIC, MoveCategory.SPECIAL, 90, 100),
                 MoveConfig("Iron Tail", PokemonTypeValue.STEEL, MoveCategory.PHYSICAL, 100, 75)
-            )
+            ),
+            nature = Nature.TIMID
         )
     }
 }

@@ -1,7 +1,6 @@
 package service
 
 import domain.entity.Pokemon
-import domain.value.MoveCategory
 import domain.value.PokemonTypeValue
 import event.UserEvent
 import factory.PokemonFactory
@@ -48,7 +47,10 @@ class BattleServiceTest {
 
         // Verify Pokemon types
         assertEquals(listOf(PokemonTypeValue.ELECTRIC), battleService.side1Pokemon.type.originalTypes)
-        assertEquals(listOf(PokemonTypeValue.GHOST, PokemonTypeValue.POISON), battleService.side2Pokemon.type.originalTypes)
+        assertEquals(
+            listOf(PokemonTypeValue.GHOST, PokemonTypeValue.POISON),
+            battleService.side2Pokemon.type.originalTypes
+        )
     }
 
     @Test

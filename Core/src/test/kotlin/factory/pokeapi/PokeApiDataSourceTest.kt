@@ -6,16 +6,16 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class PokeApiDataSourceTest {
-    
+
     @Test
     fun `test getPokemonConfig returns valid config for Pikachu`() {
         // Arrange
         val dataSource = PokeApiDataSource()
         val pikachuId = 25 // Pikachu's ID in the PokeAPI
-        
+
         // Act
         val config = dataSource.getPokemonConfig(pikachuId)
-        
+
         // Assert
         assertNotNull(config, "Config should not be null")
         assertEquals("Pikachu", config.name, "Name should be Pikachu")
@@ -29,27 +29,27 @@ class PokeApiDataSourceTest {
         assertTrue(config.moves.isNotEmpty(), "Moves should not be empty")
         println("[DEBUG_LOG] Pikachu config: $config")
     }
-    
+
     @Test
     fun `test hasPokemon returns true for existing Pokemon`() {
         // Arrange
         val dataSource = PokeApiDataSource()
         val bulbasaurId = 1 // Bulbasaur's ID in the PokeAPI
-        
+
         // Act
         val exists = dataSource.hasPokemon(bulbasaurId)
-        
+
         // Assert
         assertTrue(exists, "Bulbasaur should exist in the PokeAPI")
     }
-    
+
     @Test
     fun `test different environments can be configured`() {
         // Arrange
         val productionDataSource = PokeApiDataSource(PokeApiDataSource.Environment.PRODUCTION)
         val stagingDataSource = PokeApiDataSource(PokeApiDataSource.Environment.STAGING)
         val developmentDataSource = PokeApiDataSource(PokeApiDataSource.Environment.DEVELOPMENT)
-        
+
         // Act & Assert - Just verify that the environments can be configured without errors
         // In a real test, we would mock the HTTP client and verify that it uses the correct base URL
         assertNotNull(productionDataSource)

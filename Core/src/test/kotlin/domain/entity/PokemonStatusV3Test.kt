@@ -1,9 +1,6 @@
 package domain.entity
 
-import domain.value.EvV2
-import domain.value.IvV2
-import domain.value.MoveCategory
-import domain.value.StatusType
+import domain.value.*
 import event.DamageEventInput
 import event.StatusEvent
 import org.junit.jupiter.api.Assertions.*
@@ -14,10 +11,30 @@ class PokemonStatusV3Test {
 
     // Helper function to create a standard test PokemonStatusV3 instance
     private fun createTestPokemonStatus(
-        evH: Int = 0, evA: Int = 0, evB: Int = 0, evC: Int = 0, evD: Int = 0, evS: Int = 0,
-        ivH: Int = 31, ivA: Int = 31, ivB: Int = 31, ivC: Int = 31, ivD: Int = 31, ivS: Int = 31,
-        baseH: UInt = 100u, baseA: UInt = 100u, baseB: UInt = 100u, baseC: UInt = 100u, baseD: UInt = 100u, baseS: UInt = 100u,
-        correctionA: Int = 0, correctionB: Int = 0, correctionC: Int = 0, correctionD: Int = 0, correctionS: Int = 0
+        evH: Int = 0,
+        evA: Int = 0,
+        evB: Int = 0,
+        evC: Int = 0,
+        evD: Int = 0,
+        evS: Int = 0,
+        ivH: Int = 31,
+        ivA: Int = 31,
+        ivB: Int = 31,
+        ivC: Int = 31,
+        ivD: Int = 31,
+        ivS: Int = 31,
+        baseH: UInt = 100u,
+        baseA: UInt = 100u,
+        baseB: UInt = 100u,
+        baseC: UInt = 100u,
+        baseD: UInt = 100u,
+        baseS: UInt = 100u,
+        correctionA: Int = 0,
+        correctionB: Int = 0,
+        correctionC: Int = 0,
+        correctionD: Int = 0,
+        correctionS: Int = 0,
+        nature: Nature = Nature.HARDY
     ): PokemonStatusV3 {
         val ev = PokemonStatusEvV3(
             h = EvV2(evH),
@@ -54,7 +71,7 @@ class PokemonStatusV3Test {
             s = correctionS
         )
 
-        return PokemonStatusV3(ev, iv, base, correction)
+        return PokemonStatusV3(ev, iv, base, correction, nature)
     }
 
     @Test
@@ -198,29 +215,96 @@ class PokemonStatusV3Test {
     }
 
     @Test
+    fun testNatureEffect() {
+        // Test with HARDY nature (neutral, no effect)
+        val hardyStatus = createTestPokemonStatus(
+            baseA = 100u, baseB = 100u, baseC = 100u, baseD = 100u, baseS = 100u,
+            nature = Nature.HARDY
+        )
+
+        // All stats should have no nature modifier (1.0)
+        assertEquals(120, hardyStatus.realBaseA.toInt())
+        assertEquals(120, hardyStatus.realBaseB.toInt())
+        assertEquals(120, hardyStatus.realBaseC.toInt())
+        assertEquals(120, hardyStatus.realBaseD.toInt())
+        assertEquals(120, hardyStatus.realBaseS.toInt())
+
+        // Test with ADAMANT nature (increases Attack, decreases Special Attack)
+        val adamantStatus = createTestPokemonStatus(
+            baseA = 100u, baseB = 100u, baseC = 100u, baseD = 100u, baseS = 100u,
+            nature = Nature.ADAMANT
+        )
+
+        // Attack should be increased by 10% (100 * 1.1 = 110)
+        assertEquals(132, adamantStatus.realBaseA.toInt())
+        // Special Attack should be decreased by 10% (100 * 0.9 = 90)
+        assertEquals(108, adamantStatus.realBaseC.toInt())
+        // Other stats should be unchanged
+        assertEquals(120, adamantStatus.realBaseB.toInt())
+        assertEquals(120, adamantStatus.realBaseD.toInt())
+        assertEquals(120, adamantStatus.realBaseS.toInt())
+
+        // Test with MODEST nature (increases Special Attack, decreases Attack)
+        val modestStatus = createTestPokemonStatus(
+            baseA = 100u, baseB = 100u, baseC = 100u, baseD = 100u, baseS = 100u,
+            nature = Nature.MODEST
+        )
+
+        // Special Attack should be increased by 10% (100 * 1.1 = 110)
+        assertEquals(132, modestStatus.realBaseC.toInt())
+        // Attack should be decreased by 10% (100 * 0.9 = 90)
+        assertEquals(108, modestStatus.realBaseA.toInt())
+        // Other stats should be unchanged
+        assertEquals(120, modestStatus.realBaseB.toInt())
+        assertEquals(120, modestStatus.realBaseD.toInt())
+        assertEquals(120, modestStatus.realBaseS.toInt())
+
+        // Test with JOLLY nature (increases Speed, decreases Special Attack)
+        val jollyStatus = createTestPokemonStatus(
+            baseA = 100u, baseB = 100u, baseC = 100u, baseD = 100u, baseS = 100u,
+            nature = Nature.JOLLY
+        )
+
+        // Speed should be increased by 10% (100 * 1.1 = 110)
+        assertEquals(132, jollyStatus.realBaseS.toInt())
+        // Special Attack should be decreased by 10% (100 * 0.9 = 90)
+        assertEquals(108, jollyStatus.realBaseC.toInt())
+        // Other stats should be unchanged
+        assertEquals(120, jollyStatus.realBaseA.toInt())
+        assertEquals(120, jollyStatus.realBaseB.toInt())
+        assertEquals(120, jollyStatus.realBaseD.toInt())
+
+        // Verify that nature does not affect HP
+        assertEquals(175, hardyStatus.realBaseH.toInt())
+        assertEquals(175, adamantStatus.realBaseH.toInt())
+        assertEquals(175, modestStatus.realBaseH.toInt())
+        assertEquals(175, jollyStatus.realBaseH.toInt())
+    }
+
+    @Test
     fun testCalculateDamage() {
         // Create Move instances for testing
-        val physicalMove = domain.value.Move(
+        val physicalMove = Move(
             name = "Test Physical Move",
-            type = domain.value.PokemonTypeValue.NORMAL,
+            type = PokemonTypeValue.NORMAL,
             category = MoveCategory.PHYSICAL,
             power = 100,
             accuracy = 100,
             priority = 0
         )
 
-        val specialMove = domain.value.Move(
+        val specialMove = Move(
             name = "Test Special Move",
-            type = domain.value.PokemonTypeValue.NORMAL,
+            type = PokemonTypeValue.NORMAL,
             category = MoveCategory.SPECIAL,
             power = 100,
             accuracy = 100,
             priority = 0
         )
 
-        val statusMove = domain.value.Move(
+        val statusMove = Move(
             name = "Test Status Move",
-            type = domain.value.PokemonTypeValue.NORMAL,
+            type = PokemonTypeValue.NORMAL,
             category = MoveCategory.STATUS,
             power = 0,
             accuracy = 100,
@@ -237,7 +321,7 @@ class PokemonStatusV3Test {
         val physicalDamage = status.calculateDamage(physicalDamageInput, 1.0)
         assertTrue(physicalDamage > 0)
 
-        // Test damage calculation with SPECIAL move
+        // Test damage calculation with a SPECIAL move
         val specialDamageInput = DamageEventInput(specialMove, 60)
         val specialDamage = status.calculateDamage(specialDamageInput, 1.0)
         assertTrue(specialDamage > 0)

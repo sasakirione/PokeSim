@@ -10,7 +10,7 @@ interface BattleLogger {
      * @param message The message to log
      */
     fun log(message: String)
-    
+
     /**
      * Log a message with a newline prefix to the output.
      * @param message The message to log

@@ -15,7 +15,7 @@ interface PokemonDataSource {
      * @return The Pokémon configuration if found, null otherwise.
      */
     fun getPokemonConfig(pokemonId: Int): PokemonFactory.PokemonConfig?
-    
+
     /**
      * Checks if a Pokémon with the given ID exists in this data source.
      *

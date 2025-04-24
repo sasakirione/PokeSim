@@ -5,20 +5,14 @@ import domain.interfaces.PokemonMove
 import domain.interfaces.PokemonStatus
 import domain.interfaces.PokemonType
 import domain.value.MoveCategory
-import event.ActionEvent
-import event.DamageEventInput
-import event.DamageEventResult
-import event.StatusEvent
-import event.TypeEvent
-import event.UserEvent
-import event.UserEventResult
+import event.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.floor
 
 /**
  * Represents a Pokémon entity in the battle simulator.
- * 
+ *
  * This class encapsulates all the properties and behaviors of a Pokémon during battles,
  * including its stats, moves, type, and battle actions.
  *
@@ -29,7 +23,14 @@ import kotlin.math.floor
  * @property pokemonMove The moves that the Pokémon can use in battle
  * @property level The level of the Pokémon, which affects damage calculations
  */
-class Pokemon(val name: String, val type: PokemonType, val status: PokemonStatus, val hp: PokemonHp, val pokemonMove: PokemonMove, val level: Int) {
+class Pokemon(
+    val name: String,
+    val type: PokemonType,
+    val status: PokemonStatus,
+    val hp: PokemonHp,
+    val pokemonMove: PokemonMove,
+    val level: Int
+) {
     /**
      * Processes a user event and converts it into an appropriate battle action.
      *
@@ -52,9 +53,11 @@ class Pokemon(val name: String, val type: PokemonType, val status: PokemonStatus
                 val attackIndex = fiveOutOverFiveIn(damage2 * type.getMoveMagnification(move.type))
                 return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, attackIndex)
             }
+
             is UserEvent.UserEventPokemonChange -> {
                 return ActionEvent.ActionEventPokemonChange(input.pokemonIndex)
             }
+
             else -> {
                 // Default case for other event types like UserEventGiveUp
                 throw IllegalArgumentException("Unsupported user event: ${input::class.simpleName}")

@@ -1,12 +1,9 @@
 package domain.entity
 
 import domain.interfaces.PokemonStatus
-import domain.value.EvV2
-import domain.value.StatusType
-import domain.value.StatusType.*
-import domain.value.IvV2
-import domain.value.MoveCategory
+import domain.value.*
 import domain.value.MoveCategory.*
+import domain.value.StatusType.*
 import event.DamageEventInput
 import event.StatusEvent
 import kotlin.math.floor
@@ -31,6 +28,7 @@ class PokemonStatusV3(
     val iv: PokemonFigureIvV3,
     val base: PokemonStatusBase,
     val correction: PokemonStatusCorrection = PokemonStatusCorrection(),
+    val nature: Nature = Nature.HARDY
 ) : PokemonStatus {
     /**
      * Represents the calculated real base value for the "HP" attribute of a Pokémon's status.
@@ -52,7 +50,9 @@ class PokemonStatusV3(
      * "Attack" value considering these influences.
      */
     val realBaseA
-        get() = (base.a.toInt() * 2 + iv.a.value + floor(ev.a.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5
+        get() = ((base.a.toInt() * 2 + iv.a.value + floor(ev.a.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5) * nature.getModifier(
+            A
+        )
 
     /**
      * Represents the calculated real base value for the "Defense" attribute of a Pokémon's status.
@@ -63,7 +63,9 @@ class PokemonStatusV3(
      * "Defense" value considering these influences.
      */
     val realBaseB
-        get() = (base.b.toInt() * 2 + iv.b.value + floor(ev.b.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5
+        get() = ((base.b.toInt() * 2 + iv.b.value + floor(ev.b.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5) * nature.getModifier(
+            B
+        )
 
     /**
      * Represents the calculated real base value for the "SpAttack" attribute of a Pokémon's status.
@@ -74,7 +76,9 @@ class PokemonStatusV3(
      * "SpAttack" value considering these influences.
      */
     val realBaseC
-        get() = (base.c.toInt() * 2 + iv.c.value + floor(ev.c.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5
+        get() = ((base.c.toInt() * 2 + iv.c.value + floor(ev.c.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5) * nature.getModifier(
+            C
+        )
 
     /**
      * Represents the calculated real base value for the "SpDefense" attribute of a Pokémon's status.
@@ -85,7 +89,9 @@ class PokemonStatusV3(
      * "SpDefense" value considering these influences.
      */
     val realBaseD
-        get() = (base.d.toInt() * 2 + iv.d.value + floor(ev.d.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5
+        get() = ((base.d.toInt() * 2 + iv.d.value + floor(ev.d.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5) * nature.getModifier(
+            D
+        )
 
     /**
      * Represents the calculated real base value for the "Speed" attribute of a Pokémon's status.
@@ -96,7 +102,9 @@ class PokemonStatusV3(
      * "Speed" value considering these influences.
      */
     val realBaseS
-        get() = (base.s.toInt() * 2 + iv.s.value + floor(ev.s.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5
+        get() = ((base.s.toInt() * 2 + iv.s.value + floor(ev.s.value.toDouble() / 4.0).toInt()) * (50.0 / 100.0) + 5) * nature.getModifier(
+            S
+        )
 
     override fun getRealH(isDirect: Boolean): Int {
         return realBaseH.toInt()
@@ -155,8 +163,8 @@ class PokemonStatusV3(
         }
     }
 
-    override fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int{
-        val damage1 = when (input.move.category){
+    override fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int {
+        val damage1 = when (input.move.category) {
             PHYSICAL -> input.attackIndex / getRealB()
             SPECIAL -> input.attackIndex / getRealD()
             STATUS -> return 0

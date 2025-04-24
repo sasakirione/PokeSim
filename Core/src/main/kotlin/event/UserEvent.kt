@@ -15,7 +15,7 @@ sealed class UserEvent : PokemonEvent() {
      *
      * @param moveIndex The index of the selected move in the Pokémon's move list.
      */
-    class UserEventMoveSelect(val moveIndex: Int): UserEvent()
+    class UserEventMoveSelect(val moveIndex: Int) : UserEvent()
 
     /**
      * Represents an event where a user chooses to switch their Pokémon during a battle.
@@ -26,7 +26,7 @@ sealed class UserEvent : PokemonEvent() {
      *
      * @param pokemonIndex The index of the Pokémon to switch to, as part of the user's team.
      */
-    class UserEventPokemonChange(val pokemonIndex: Int): UserEvent()
+    class UserEventPokemonChange(val pokemonIndex: Int) : UserEvent()
 
     /**
      * Represents an event where a player chooses to give up the battle.
@@ -35,7 +35,7 @@ sealed class UserEvent : PokemonEvent() {
      * It is typically triggered when the player decides they can no longer continue the battle,
      * either due to strategic reasons or lack of remaining options.
      */
-    class UserEventGiveUp(): UserEvent()
+    class UserEventGiveUp() : UserEvent()
 }
 
 /**
@@ -51,14 +51,14 @@ sealed class ActionEvent : PokemonEvent() {
      *
      * @param move The move being used by the Pokémon.
      */
-    sealed class ActionEventMove(val move: Move): ActionEvent() {
+    sealed class ActionEventMove(val move: Move) : ActionEvent() {
 
         /**
          * Represents a move action that affects status.
          *
          * @param move The status-affecting move being used.
          */
-        class ActionEventMoveStatus(move: Move): ActionEventMove(move)
+        class ActionEventMoveStatus(move: Move) : ActionEventMove(move)
 
         /**
          * Represents a move action that deals damage.
@@ -66,7 +66,7 @@ sealed class ActionEvent : PokemonEvent() {
          * @param move The damage-dealing move being used.
          * @param attackIndex The index of the attacking Pokémon.
          */
-        class ActionEventMoveDamage(move: Move, val attackIndex: Int): ActionEventMove(move)
+        class ActionEventMoveDamage(move: Move, val attackIndex: Int) : ActionEventMove(move)
     }
 
     /**
@@ -77,7 +77,7 @@ sealed class ActionEvent : PokemonEvent() {
      *
      * @param pokemonIndex The index of the Pokémon to switch to in the player's team.
      */
-    class ActionEventPokemonChange(val pokemonIndex: Int): ActionEvent()
+    class ActionEventPokemonChange(val pokemonIndex: Int) : ActionEvent()
 }
 
 /**

@@ -1,19 +1,8 @@
 package factory
 
-import domain.entity.Pokemon
-import domain.entity.PokemonFigureIvV3
-import domain.entity.PokemonHpV1
-import domain.entity.PokemonMoveV3
-import domain.entity.PokemonStatusBase
-import domain.entity.PokemonStatusEvV3
-import domain.entity.PokemonStatusV3
-import domain.entity.PokemonTypeV3
+import domain.entity.*
 import domain.interfaces.PokemonDataSource
-import domain.value.EvV2
-import domain.value.IvV2
-import domain.value.Move
-import domain.value.MoveCategory
-import domain.value.PokemonTypeValue
+import domain.value.*
 
 class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonDataSource()) {
     /**
@@ -27,7 +16,8 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
         val evs: StatDistribution,
         val ivs: StatDistribution = StatDistribution(31, 31, 31, 31, 31, 31),
         val moves: List<MoveConfig>,
-        val level: Int = 50
+        val level: Int = 50,
+        val nature: Nature = Nature.HARDY
     )
 
     /**
@@ -62,7 +52,7 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
     fun getPokemon(pokemonId: Int): Pokemon {
         // Get the Pokémon configuration from the data source or use Alcremie as default
         val config = dataSource.getPokemonConfig(pokemonId) ?: dataSource.getPokemonConfig(1)
-            ?: throw IllegalStateException("Default Pokémon (ID: 1) not found in data source")
+        ?: throw IllegalStateException("Default Pokémon (ID: 1) not found in data source")
 
         // Create and return the Pokémon from the configuration
         return createPokemonFromConfig(config)
@@ -110,7 +100,7 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
         )
 
         // Create status
-        val status = PokemonStatusV3(ev, iv, base)
+        val status = PokemonStatusV3(ev, iv, base, nature = config.nature)
 
         // Create HP
         val hpInt = status.getRealH()
