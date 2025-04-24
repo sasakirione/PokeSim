@@ -20,7 +20,7 @@ class BattleServiceTest {
     fun setUp() {
         factory = PokemonFactory()
 
-        // Create Pokemon for side 1 (Pikachu and Alcremie)
+        // Create Pokémon for side 1 (Pikachu and Alcremie)
         side1Pokemons = listOf(
             factory.getPokemon(3), // Pikachu
             factory.getPokemon(1)  // Alcremie
@@ -35,21 +35,21 @@ class BattleServiceTest {
         // Create a test logger to capture log messages
         testLogger = TestBattleLogger()
 
-        // Create the battle service with the test Pokemon and logger
+        // Create the battle service with the test Pokémon and logger
         battleService = BattleService(side1Pokemons, side2Pokemons, testLogger)
     }
 
     @Test
     fun `test initial battle state`() {
         // Verify initial state
-        assertEquals("Pikachu", battleService.side1Pokemon.name)
-        assertEquals("Gengar", battleService.side2Pokemon.name)
+        assertEquals("Pikachu", battleService.party1.pokemon.name)
+        assertEquals("Gengar", battleService.party2.pokemon.name)
 
-        // Verify Pokemon types
-        assertEquals(listOf(PokemonTypeValue.ELECTRIC), battleService.side1Pokemon.type.originalTypes)
+        // Verify Pokémon types
+        assertEquals(listOf(PokemonTypeValue.ELECTRIC), battleService.party1.pokemon.type.originalTypes)
         assertEquals(
             listOf(PokemonTypeValue.GHOST, PokemonTypeValue.POISON),
-            battleService.side2Pokemon.type.originalTypes
+            battleService.party2.pokemon.type.originalTypes
         )
     }
 
@@ -68,8 +68,8 @@ class BattleServiceTest {
         // Verify that damage was dealt (HP should be less than initial)
         // Pikachu's base HP is 0 (110-[118-139])
         // Gengar's base HP is min 69 (135-[66-55])
-        assertTrue { battleService.side2Pokemon.hp.hp >= 69u }
-        assertTrue { battleService.side2Pokemon.hp.hp <= 80u }
+        assertTrue { battleService.party2.pokemon.currentHp() >= 69u }
+        assertTrue { battleService.party2.pokemon.currentHp() <= 80u }
 
         // Verify log messages contain attack information
         assertTrue(testLogger.logMessages.any { it.contains("used Thunderbolt") })
@@ -78,7 +78,7 @@ class BattleServiceTest {
 
     @Test
     fun `test Pokemon change action`() {
-        // Player 1 changes Pokemon, Player 2 attacks
+        // Player 1 changes Pokémon, Player 2 attacks
         val side1Input = UserEvent.UserEventPokemonChange(1) // Change to Alcremie
         val side2Input = UserEvent.UserEventMoveSelect(0) // Gengar uses Shadow Ball
 
@@ -88,8 +88,8 @@ class BattleServiceTest {
         // Verify that the battle is not finished
         assertFalse(result)
 
-        // Verify that Player 1's Pokemon changed
-        assertEquals("Alcremie", battleService.side1Pokemon.name)
+        // Verify that Player 1's Pokémon changed
+        assertEquals("Alcremie", battleService.party1.pokemon.name)
 
         // Verify log messages
         assertTrue(testLogger.logMessages.any { it.contains("Player 1 changed to Alcremie") })
@@ -97,7 +97,7 @@ class BattleServiceTest {
 
     @Test
     fun `test battle completion when all Pokemon faint`() {
-        // Set up a battle where one Pokemon is almost defeated
+        // Set up a battle where one Pokémon is almost defeated
         val weakPikachu = factory.getPokemon(3) // Pikachu
         // Reduce HP to 1
         repeat(34) { weakPikachu.hp.takeDamage(1u) }
@@ -114,7 +114,7 @@ class BattleServiceTest {
         // Execute the turn - Pikachu should faint
         val result = battleServiceWithWeakPokemon.executeTurn(side1Input, side2Input)
 
-        // Verify that the battle is finished (all Pokemon on side 1 fainted)
+        // Verify that the battle is finished (all Pokémon on side1 fainted)
         assertTrue(result)
 
         // Verify log messages
@@ -132,7 +132,7 @@ class BattleServiceTest {
         battleService.executeTurn(side1Input, side2Input)
 
         // Verify log messages to check turn order
-        // The faster Pokemon's attack should be logged first
+        // The faster Pokémon's attack should be logged first
         val attackMessages = testLogger.logMessages.filter { it.contains("used") }
         assertTrue(attackMessages.isNotEmpty())
         assertTrue(attackMessages.first().contains("Gengar"))

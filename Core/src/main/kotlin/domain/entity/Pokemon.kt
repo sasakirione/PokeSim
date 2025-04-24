@@ -77,6 +77,21 @@ class Pokemon(
     }
 
     /**
+     * Executes the item effect associated with the Pokémon at the start of its turn.
+     *
+     * This method invokes the held item's `onTurnStart` functionality,
+     * passing the current instance of the Pokémon.
+     * The effect applied depends on the specific item held by the Pokémon.
+     */
+    fun onTurnStart(){
+        heldItem.onTurnStart(this)
+    }
+
+    fun onTurnEnd() {
+        heldItem.onTurnEnd(this)
+    }
+
+    /**
      * Gets the final speed stat of the Pokémon.
      *
      * This method retrieves the actual speed value used for battle calculations,
@@ -88,6 +103,23 @@ class Pokemon(
         val baseSpeed = status.getRealS()
         // Apply held item effects to speed stat
         return heldItem.modifyStat(this, StatType.SPEED, baseSpeed)
+    }
+
+    /**
+     * Determines if the Pokémon is still alive.
+     *
+     * This method evaluates the Pokémon's current health points (HP) and
+     * checks if it has not fainted.
+     * A Pokémon is considered alive if its HP is greater than zero.
+     *
+     * @return True if the Pokémon is still alive, false otherwise
+     */
+    fun isAlive(): Boolean {
+        return !hp.isDead()
+    }
+
+    fun currentHp(): UInt {
+        return hp.hp
     }
 
     // TODO: Depends on Java (Be Pure Kotlin someday)
@@ -114,7 +146,7 @@ class Pokemon(
      */
     fun calculateDamage(input: DamageEventInput): DamageEventResult {
         // Apply held item effects to incoming damage
-        var modifiedInput = heldItem.modifyIncomingDamage(this, input)
+        val modifiedInput = heldItem.modifyIncomingDamage(this, input)
 
         val typeCompatibility = type.getTypeMatch(modifiedInput.move.type)
         val damage = status.calculateDamage(modifiedInput, typeCompatibility)

@@ -7,7 +7,7 @@ import event.DamageEventResult
 /**
  * Interface representing a held item in the game.
  * 
- * Held items can provide various effects to the Pokémon holding them,
+ * Held items can provide various effects on the Pokémon holding them,
  * such as stat boosts, damage modifications, or special abilities.
  */
 interface Item {
@@ -74,7 +74,7 @@ interface Item {
 }
 
 /**
- * Enum representing the different types of stats that can be modified by items.
+ * Enum representing the different types of stats that item can modify.
  */
 enum class StatType {
     HP, ATTACK, DEFENSE, SPECIAL_ATTACK, SPECIAL_DEFENSE, SPEED
@@ -110,7 +110,7 @@ class StatBoostItem(
 }
 
 /**
- * An item that boosts the power of moves of a specific type.
+ * An item that boosts the power of specific moves.
  * 
  * @property moveType The type of moves that this item boosts
  * @property boostPercentage The percentage by which the move power is boosted
