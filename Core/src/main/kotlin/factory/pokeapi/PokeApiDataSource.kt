@@ -29,7 +29,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
         DEVELOPMENT("http://localhost:8000/api/v2/")
     }
 
-    // Create HTTP client with JSON serialization
+    // Create HTTP client with JSON serialisation
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json {
@@ -40,7 +40,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
     }
 
     /**
-     * Cache of Pokemon configurations to avoid repeated API calls
+     * Cache of Pokémon configurations to avoid repeated API calls
      */
     private val pokemonConfigCache = mutableMapOf<Int, PokemonFactory.PokemonConfig?>()
 
@@ -62,7 +62,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
                 // Fetch Pokemon data
                 val pokemonResponse: PokemonResponse = client.get("${environment.baseUrl}pokemon/$pokemonId").body()
 
-                // Fetch move data for the first two moves (or fewer if the Pokemon has fewer moves)
+                // Fetch move data for the first two moves (or fewer if the Pokémon has fewer moves)
                 val moveResponses = pokemonResponse.moves.take(2).map { moveSlot ->
                     client.get(moveSlot.move.url).body<MoveResponse>()
                 }
@@ -75,7 +75,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
 
                 config
             } catch (e: Exception) {
-                // Log error and return null if API call fails
+                // Log error and return null if the API call fails
                 println("Error fetching Pokemon with ID $pokemonId: ${e.message}")
 
                 // Cache the null result to avoid repeated failed API calls
@@ -98,7 +98,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             return pokemonConfigCache[pokemonId] != null
         }
 
-        // If not in cache, try to fetch it
+        // If not in the cache, try to fetch it
         return getPokemonConfig(pokemonId) != null
     }
 
@@ -114,7 +114,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             convertToPokemonTypeValue(typeSlot.type.name)
         }
 
-        // Use the first type as the terastal type (could be randomized or configurable in the future)
+        // Use the first type as the terastal type (could be randomised or configurable in the future)
         val terastalType = types.firstOrNull() ?: PokemonTypeValue.NORMAL
 
         // Convert stats
@@ -127,7 +127,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
             spd = getStatValue(pokemonResponse.stats, "speed").toUInt()
         )
 
-        // Create default EVs (could be randomized or configurable in the future)
+        // Create default EVs (could be randomised or configurable in the future)
         val evs = PokemonFactory.StatDistribution(
             hp = 0,
             atk = 0,
@@ -161,7 +161,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
     }
 
     /**
-     * Gets a stat value from the stats list.
+     * Gets a stat value from the stat list.
      */
     private fun getStatValue(stats: List<PokemonStatResponse>, statName: String): Int {
         return stats.find { it.stat.name == statName }?.baseStat ?: 50
