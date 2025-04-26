@@ -1,0 +1,55 @@
+name: ✨ Feature request
+description: Use this template to suggest new features or improvements
+title: 'Feature: '
+labels: ['enhancement']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your contribution idea! Please share as much detail as you can so we can evaluate and prioritize it effectively.
+
+  - type: input
+    id: feature
+    attributes:
+      label: Feature Title
+      placeholder: e.g., “Add filtering to the user list view”
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Background
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: Users need to quickly narrow down results when the list is long
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe your idea in detail (UI changes, expected behavior, etc.)
+      placeholder: Add a dropdown to select status, with checkboxes for multi-select
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches have you tried or considered?
+      placeholder: Export CSV and filter in a spreadsheet
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Mockups, screenshots, or related links
+      placeholder: Link to Figma design or screenshots
+    validations:
+      required: false
