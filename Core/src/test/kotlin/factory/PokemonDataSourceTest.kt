@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class PokemonDataSourceTest {
 
     @Test
-    fun `DefaultPokemonDataSource should provide Pokémon configurations`() {
+    fun `DefaultPokemonDataSource should provide Pokemon configurations`() {
         // Arrange
         val dataSource = DefaultPokemonDataSource()
 
@@ -41,7 +41,7 @@ class PokemonDataSourceTest {
     }
 
     @Test
-    fun `PokemonFactory should create Pokémon from data source`() {
+    fun `PokemonFactory should create Pokemon from data source`() {
         // Arrange
         val dataSource = DefaultPokemonDataSource()
         val factory = PokemonFactory(dataSource)
@@ -58,7 +58,7 @@ class PokemonDataSourceTest {
     }
 
     @Test
-    fun `PokemonFactory should use default Pokémon when ID is not found`() {
+    fun `PokemonFactory should use default Pokemon when ID is not found`() {
         // Arrange
         val dataSource = DefaultPokemonDataSource()
         val factory = PokemonFactory(dataSource)

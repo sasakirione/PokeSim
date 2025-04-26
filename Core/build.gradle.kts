@@ -13,6 +13,8 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("io.arrow-kt:arrow-core:2.1.0")
+    implementation("io.arrow-kt:arrow-fx-coroutines:2.1.0")
 
     // Ktor client for HTTP requests
     implementation("io.ktor:ktor-client-core:2.3.7")

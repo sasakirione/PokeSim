@@ -103,19 +103,19 @@ class DamageEventInput(val move: Move, val attackIndex: Int) : PokemonEvent()
  *
  * @param eventList The list of events that occur as a result of the damage.
  */
-sealed class DamageEventResult(val eventList: List<PokemonEvent>) : PokemonEvent() {
+sealed class DamageEventResult(val eventList: List<PokemonEvent>, val damage: Int) : PokemonEvent() {
 
     /**
      * Represents a damage result where the Pokémon is still alive.
      *
      * @param eventList The list of events that occur as a result of the damage.
      */
-    class DamageEventResultAlive(eventList: List<PokemonEvent>) : DamageEventResult(eventList)
+    class DamageEventResultAlive(eventList: List<PokemonEvent>, damage: Int) : DamageEventResult(eventList, damage)
 
     /**
      * Represents a damage result where the Pokémon has fainted.
      *
      * @param eventList The list of events that occur as a result of the damage.
      */
-    class DamageEventResultDead(eventList: List<PokemonEvent>) : DamageEventResult(eventList)
+    class DamageEventResultDead(eventList: List<PokemonEvent>, damage: Int) : DamageEventResult(eventList, damage)
 }

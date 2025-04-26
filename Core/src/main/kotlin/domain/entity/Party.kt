@@ -215,4 +215,14 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
         logger.logWithNewLine("$name has no Pokémon able to battle!")
     }
 
+    /**
+     * Logs the result of an attack on the active Pokémon in the party.
+     *
+     * This method outputs the current and maximum HP of the active Pokémon to the logger as part of the battle log.
+     * The logged message includes the owner's name, the active Pokémon's name, and its HP status.
+     */
+    fun logAttackResultTake(){
+        logger.log("${name}'s ${pokemon.name} HP: ${pokemon.currentHp()}/${pokemon.maxHp()}")
+    }
+
 }

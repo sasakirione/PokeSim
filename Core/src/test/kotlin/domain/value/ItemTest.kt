@@ -1,8 +1,6 @@
 package domain.value
 
 import domain.entity.Pokemon
-import domain.entity.PokemonStatusV3
-import domain.entity.PokemonTypeV3
 import domain.interfaces.PokemonHp
 import domain.interfaces.PokemonMove
 import domain.interfaces.PokemonStatus
@@ -40,8 +38,9 @@ class ItemTest {
         }
 
         val hp = object : PokemonHp {
-            private var currentHp: UInt = 100u
-            override val hp: UInt get() = currentHp
+            override val maxHp: UInt
+                get() = 100u
+            override var currentHp: UInt = 100u
             override fun takeDamage(damage: UInt) { currentHp -= damage }
             override fun isDead(): Boolean = currentHp <= 0u
         }
@@ -72,7 +71,7 @@ class ItemTest {
         assertEquals(damageInput, pokemon.heldItem.modifyIncomingDamage(pokemon, damageInput))
 
         // Test that NoItem doesn't modify damage result
-        val damageResult = DamageEventResult.DamageEventResultAlive(emptyList())
+        val damageResult = DamageEventResult.DamageEventResultAlive(emptyList(), 100)
         assertEquals(damageResult, pokemon.heldItem.afterDamage(pokemon, damageResult))
     }
 

@@ -182,17 +182,14 @@ class BattleService(
         if (attackerAction !is ActionEvent.ActionEventMove.ActionEventMoveDamage) return false
 
         // Calculate damage
-        val defenderPokemon = defender.party.pokemon
-        val initialHp = defenderPokemon.hp.hp
         val damageInput = DamageEventInput(attackerAction.move, attackerAction.attackIndex)
-        val result = defenderPokemon.calculateDamage(damageInput)
+        val result = defender.party.pokemon.calculateDamage(damageInput)
 
         // Apply action results
         attacker.party.applyAction(UserEventResult(result.eventList))
 
         // Log attack results
-        val damageDealt = (initialHp - defenderPokemon.currentHp()).toInt()
-        logAttackResult(attacker, defender, attackerAction.move.name, damageDealt, initialHp.toInt())
+        logAttackResult(attacker, defender, attackerAction.move.name, result.damage)
 
         // Check if defender fainted
         if (result is DamageEventResult.DamageEventResultDead) {
@@ -217,12 +214,11 @@ class BattleService(
         attacker: Player,
         defender: Player,
         moveName: String,
-        damageDealt: Int,
-        initialHp: Int
+        damageDealt: Int
     ) {
         logger.log("${attacker.name}'s ${attacker.party.pokemon.name} used $moveName!")
         logger.log("Damage dealt: $damageDealt")
-        logger.log("${defender.name}'s ${defender.party.pokemon.name} HP: ${defender.party.pokemon.currentHp()}/${(initialHp + damageDealt).toUInt()}")
+        defender.party.logAttackResultTake()
     }
 
     /**
@@ -241,8 +237,19 @@ class BattleService(
 // For backward compatibility
 typealias BattleServiceTemp = BattleService
 
+/**
+ * Represents a type alias for a user action function.
+ *
+ * This alias defines a function type that, when invoked, returns a `Deferred` result of a `UserEvent`.
+ * It is used to encapsulate asynchronous user actions in contexts such as Pokémon battles,
+ * where the function will eventually provide a user input event after completing its execution.
+ */
 typealias User1stActionFunc = () -> Deferred<UserEvent>
 
+/**
+ * An observer for the battle service that allows external handling of user actions.
+ * Provides hooks to inject user actions for Player 1 and Player 2 at the start of each turn.
+ */
 object BattleServiceObserver {
     var UserAction1First: User1stActionFunc? = null
     var UserAction2First: User1stActionFunc? = null

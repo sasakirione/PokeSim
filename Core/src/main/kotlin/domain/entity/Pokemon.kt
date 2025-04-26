@@ -16,7 +16,7 @@ import kotlin.math.floor
 /**
  * Represents a Pokémon entity in the battle simulator.
  *
- * This class encapsulates all the properties and behaviors of a Pokémon during battles,
+ * This class encapsulates all the properties and behaviours of a Pokémon during battles,
  * including its stats, moves, type, and battle actions.
  *
  * @property name The name of the Pokémon
@@ -118,8 +118,28 @@ class Pokemon(
         return !hp.isDead()
     }
 
+    /**
+     * Retrieves the current health points (HP) of the Pokémon.
+     *
+     * This method returns the Pokémon's current HP as an unsigned integer,
+     * which represents the Pokémon's remaining vitality in battle.
+     *
+     * @return The current health points (HP) of the Pokémon as a UInt.
+     */
     fun currentHp(): UInt {
-        return hp.hp
+        return hp.currentHp
+    }
+
+    /**
+     * Retrieves the maximum health points (HP) of the Pokémon.
+     *
+     * This method returns the maximum HP value the Pokémon can have,
+     * which represents the upper limit of its vitality in battle.
+     *
+     * @return The maximum health points (HP) of the Pokémon as an unsigned integer (UInt).
+     */
+    fun maxHp(): UInt {
+        return hp.maxHp
     }
 
     // TODO: Depends on Java (Be Pure Kotlin someday)
@@ -151,12 +171,11 @@ class Pokemon(
         val typeCompatibility = type.getTypeMatch(modifiedInput.move.type)
         val damage = status.calculateDamage(modifiedInput, typeCompatibility)
         hp.takeDamage(damage.toUInt())
-
-        var result: DamageEventResult
-        if (hp.isDead()) {
-            result = DamageEventResult.DamageEventResultDead(emptyList())
+        
+        val result: DamageEventResult = if (hp.isDead()) {
+            DamageEventResult.DamageEventResultDead(emptyList(), damage)
         } else {
-            result = DamageEventResult.DamageEventResultAlive(emptyList())
+            DamageEventResult.DamageEventResultAlive(emptyList(), damage)
         }
 
         // Apply held item effects after damage calculation
