@@ -1,5 +1,3 @@
-package factory.pokeapi
-
 import domain.interfaces.PokemonDataSource
 import domain.value.MoveCategory
 import domain.value.PokemonTypeValue

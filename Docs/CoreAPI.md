@@ -116,8 +116,8 @@ val pokemon2 = factory.getPokemon(2)
 val battleService = BattleService(pokemon1, pokemon2)
 
 // Execute a turn with user inputs
-val side1Input = UserEventInput.MoveSelect(0) // Select the first move
-val side2Input = UserEventInput.MoveSelect(1) // Select the second move
+val side1Input = UserEventMoveSelect(0) // Select the first move
+val side2Input = UserEventMoveSelect(1) // Select the second move
 val isBattleFinished = battleService.executeTurn(side1Input, side2Input)
 
 // Or start a full battle (requires coroutine context)
@@ -130,28 +130,28 @@ suspend fun startBattle() {
 
 The Core API uses an event-based system for battle mechanics:
 
-1. **User Input**: Users provide input through `UserEventInput` (e.g., selecting a move).
-2. **Action Generation**: The input is converted to a `PokemonActionEvent` (e.g., using a move).
-3. **Damage Calculation**: If the action is a damaging move, damage is calculated using `DamageInput` and `DamageResult`.
-4. **Event Application**: The results are applied to the Pokémon through `UserEventReturn`.
+1. **User Input**: Users provide input through `UserEvent` subclasses (e.g., `UserEventMoveSelect` for selecting a move).
+2. **Action Generation**: The input is converted to an `ActionEvent` (e.g., using a move).
+3. **Damage Calculation**: If the action is a damaging move, damage is calculated using `DamageEventInput` and `DamageEventResult`.
+4. **Event Application**: The results are applied to the Pokémon through `UserEventResult`.
 
 ```kotlin
 // User selects a move
-val userInput = UserEventInput.MoveSelect(0)
+val userInput = UserEventMoveSelect(0)
 
 // Convert to a Pokémon action
 val action = pokemon.getAction(userInput)
 
 // If it's a damaging move, calculate damage
-if (action is PokemonActionEvent.MoveAction.MoveActionDamage) {
-    val damageInput = DamageInput(action.move, action.attackIndex)
+if (action is ActionEvent.ActionEventMove.ActionEventMoveDamage) {
+    val damageInput = DamageEventInput(action.move, action.attackIndex)
     val result = targetPokemon.calculateDamage(damageInput)
 
     // Apply the results
-    pokemon.applyAction(UserEventReturn(result.eventList))
+    pokemon.applyAction(UserEventResult(result.eventList))
 
     // Check if the target fainted
-    if (result is DamageResult.Dead) {
+    if (result is DamageEventResult.DamageEventResultDead) {
         // Handle fainting
     }
 }
@@ -174,8 +174,8 @@ fun main() {
     val battleService = BattleService(pikachu, charmander)
 
     // Execute a single turn
-    val pikachuInput = UserEventInput.MoveSelect(0) // Use first move
-    val charmanderInput = UserEventInput.MoveSelect(0) // Use first move
+    val pikachuInput = UserEventMoveSelect(0) // Use first move
+    val charmanderInput = UserEventMoveSelect(0) // Use first move
     val isBattleFinished = battleService.executeTurn(pikachuInput, charmanderInput)
 
     // Check the result

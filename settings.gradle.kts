@@ -6,3 +6,4 @@ rootProject.name = "PokeSim"
 
 include("Core")
 include("Cli")
+include("PokeApi")

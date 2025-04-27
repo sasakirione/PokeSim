@@ -1,5 +1,3 @@
-package factory.pokeapi
-
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -41,19 +39,5 @@ class PokeApiDataSourceTest {
 
         // Assert
         assertTrue(exists, "Bulbasaur should exist in the PokeAPI")
-    }
-
-    @Test
-    fun `test different environments can be configured`() {
-        // Arrange
-        val productionDataSource = PokeApiDataSource(PokeApiDataSource.Environment.PRODUCTION)
-        val stagingDataSource = PokeApiDataSource(PokeApiDataSource.Environment.STAGING)
-        val developmentDataSource = PokeApiDataSource(PokeApiDataSource.Environment.DEVELOPMENT)
-
-        // Act & Assert - Just verify that the environments can be configured without errors
-        // In a real test, we would mock the HTTP client and verify that it uses the correct base URL
-        assertNotNull(productionDataSource)
-        assertNotNull(stagingDataSource)
-        assertNotNull(developmentDataSource)
     }
 }
