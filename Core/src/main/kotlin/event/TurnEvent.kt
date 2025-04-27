@@ -200,12 +200,12 @@ sealed class Turn() {
         ) : TurnMove(
         ) {
             override fun process(): Turn {
-                var isFinished = false
-                if (isPlayer1First && (player1.action is ActionEvent.ActionEventMove)) {
-                    isFinished = executeAttack(player1, player2)
-                } else if (player2.action is ActionEvent.ActionEventMove) {
-                    isFinished = executeAttack(player2, player1)
-                }
+                val isFinished =
+                    if (isPlayer1First && (player1.action is ActionEvent.ActionEventMove)) {
+                        executeAttack(player1, player2)
+                    } else if (player2.action is ActionEvent.ActionEventMove) {
+                        executeAttack(player2, player1)
+                    } else { false }
 
                 if (isFinished) {
                     return TurnStep2ndMoveSkip(player1, player2)
@@ -234,17 +234,12 @@ sealed class Turn() {
         ) : TurnMove(
         ) {
             override fun process(): Turn {
-                var isFinished = false
-
-                if (isPlayer1First) {
-                    if ((player2.action is ActionEvent.ActionEventMove)) {
-                        isFinished = executeAttack(player2, player1)
-                    }
-                } else {
-                    if ((player1.action is ActionEvent.ActionEventMove)) {
-                        isFinished = executeAttack(player1, player2)
-                    }
-                }
+                val isFinished =
+                    if (isPlayer1First && (player2.action is ActionEvent.ActionEventMove)) {
+                        executeAttack(player2, player1)
+                    } else if ((player1.action is ActionEvent.ActionEventMove)) {
+                        executeAttack(player1, player2)
+                    } else { false }
                 return TurnEnd(player1.party, player2.party, isFinished)
             }
         }
