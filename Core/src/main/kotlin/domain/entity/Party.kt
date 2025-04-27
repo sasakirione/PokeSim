@@ -4,6 +4,7 @@ import event.ActionEvent
 import event.UserEvent
 import event.UserEventResult
 import service.BattleLogger
+import type.User1stActionFunc
 
 /**
  * Represents a party of Pokémon managed by a player in the battle context.
@@ -12,7 +13,12 @@ import service.BattleLogger
  * @param logger The logger used for battle-related messages.
  * @param name The name of the player controlling the party. Defaults to "Player 1".
  */
-class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val name: String = "Player 1") {
+class Party(
+    val pokemons: List<Pokemon>,
+    private val logger: BattleLogger,
+    val name: String = "Player 1",
+    val action1st: User1stActionFunc
+) {
     /**
      * Represents the current position of a Pokémon in the party.
      *
@@ -118,11 +124,21 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
      *         or Pokémon switch action.
      * @throws IllegalArgumentException If the user event type is unsupported.
      */
-    fun getAction(input: UserEvent): ActionEvent{
+    fun getAction(input: UserEvent): ActionEvent {
         return pokemon.getAction(input)
     }
 
-    fun applyAction(actionResult: UserEventResult){
+    /**
+     * Applies the result of a user action to the active Pokémon in the party.
+     *
+     * This method delegates the application of the provided `UserEventResult`
+     * to the `applyAction` method of the active Pokémon in the party, processing
+     * any events or effects resulting from the user action.
+     *
+     * @param actionResult The result of the user action, containing a list of events
+     *                     to be processed by the active Pokémon.
+     */
+    fun applyAction(actionResult: UserEventResult) {
         pokemon.applyAction(actionResult)
     }
 
@@ -136,16 +152,30 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
             return
         }
 
-        val pokemonIndex = action.pokemonIndex
+        val changePokemonIndex = action.pokemonIndex
 
         // Check if the index is valid and the Pokémon is not fainted
-        if (pokemonIndex >= 0 && pokemonIndex < count && pokemons[pokemonIndex].isAlive()) {
-            this@Party.pokemonIndex = pokemonIndex
+        if (changePokemonIndex >= 0 && changePokemonIndex < count && pokemons[changePokemonIndex].isAlive()) {
+            pokemonIndex = changePokemonIndex
             logger.logWithNewLine("Player 1 changed to ${pokemon.name}!")
             return
         }
         logger.logWithNewLine("Player 1 failed to change Pokemon!")
         return
+    }
+
+    /**
+     * Retrieves the next user event to process during the battle.
+     *
+     * This function asynchronously fetches the current user input or decision
+     * that corresponds to the next action to perform.
+     * The returned `UserEvent` represents the action selected by the user,
+     * such as a move selection, Pokémon switch, or forfeit.
+     *
+     * @return A `UserEvent` representing the user's choice or input for the next action.
+     */
+    suspend fun getAction(): UserEvent {
+        return action1st.invoke().await()
     }
 
     /**
@@ -167,7 +197,7 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
      * and the details of the first Pokémon being sent out. The logs include a newline-prefixed message
      * about the party status and a regular log message about the Pokémon being sent into battle.
      */
-    fun logStartBattle(){
+    fun logStartBattle() {
         logger.logWithNewLine("$name has $count Pokémon.")
         logger.log("$name sends out ${pokemon.name}!")
     }
@@ -179,7 +209,7 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
      * of the party and declaring it as faster based on battle conditions.
      * The logged message includes the party owner's name and the faster Pokémon's name.
      */
-    fun logFirst(){
+    fun logFirst() {
         logger.logWithNewLine("${name}'s ${pokemon.name} is faster!")
     }
 
@@ -190,7 +220,7 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
      * name and its fainted status. The message includes the party owner's name
      * and the fainted Pokémon's name.
      */
-    fun logDead(){
+    fun logDead() {
         logger.logWithNewLine("${name}'s ${pokemon.name} fainted!")
     }
 
@@ -200,7 +230,7 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
      * This method outputs a log message to signify the victory of the party.
      * The log includes the party owner's name and a simple declaration of their win.
      */
-    fun logWin(){
+    fun logWin() {
         logger.log("$name wins!")
     }
 
@@ -221,8 +251,22 @@ class Party(val pokemons: List<Pokemon>, private val logger: BattleLogger, val n
      * This method outputs the current and maximum HP of the active Pokémon to the logger as part of the battle log.
      * The logged message includes the owner's name, the active Pokémon's name, and its HP status.
      */
-    fun logAttackResultTake(){
+    fun logAttackResultTake() {
         logger.log("${name}'s ${pokemon.name} HP: ${pokemon.currentHp()}/${pokemon.maxHp()}")
+    }
+
+    /**
+     * Logs the result of a Pokémon's attack move during a battle.
+     *
+     * This method outputs the name of the move used by the Pokémon
+     * and the amount of damage dealt as part of the battle log.
+     *
+     * @param moveName The name of the attack move being logged.
+     * @param damageDealt The amount of damage the attack move dealt.
+     */
+    fun logAttackResult(moveName: String, damageDealt: Int) {
+        logger.log("${name}'s ${pokemon.name} used $moveName!")
+        logger.log("Damage dealt: $damageDealt")
     }
 
 }

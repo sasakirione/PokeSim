@@ -83,7 +83,7 @@ class Pokemon(
      * passing the current instance of the Pokémon.
      * The effect applied depends on the specific item held by the Pokémon.
      */
-    fun onTurnStart(){
+    fun onTurnStart() {
         heldItem.onTurnStart(this)
     }
 
@@ -171,7 +171,7 @@ class Pokemon(
         val typeCompatibility = type.getTypeMatch(modifiedInput.move.type)
         val damage = status.calculateDamage(modifiedInput, typeCompatibility)
         hp.takeDamage(damage.toUInt())
-        
+
         val result: DamageEventResult = if (hp.isDead()) {
             DamageEventResult.DamageEventResultDead(emptyList(), damage)
         } else {

@@ -1,13 +1,13 @@
 import com.github.ajalt.clikt.command.SuspendingCliktCommand
 import com.github.ajalt.clikt.command.main
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
+import domain.entity.Party
 import event.UserEvent
 import factory.PokemonFactory
-import service.BattleServiceObserver
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import service.BattleServiceTemp
 
-class SingleBattleG9: SuspendingCliktCommand() {
+class SingleBattleG9 : SuspendingCliktCommand() {
 
     override suspend fun run() {
         echo("Start Battle(Regulation Gen9 Single Battle)")
@@ -53,11 +53,10 @@ class SingleBattleG9: SuspendingCliktCommand() {
             deferred
         }
 
-        BattleServiceObserver.UserAction1First = action1
-        BattleServiceObserver.UserAction2First = action2
-
         val logger = CliBattleLogger(this)
-        val battle = BattleServiceTemp(listOf(pokemon1), listOf(pokemon2), logger)
+        val party1 = Party(listOf(pokemon1), logger, "Player 1", action1)
+        val party2 = Party(listOf(pokemon2), logger, "Player 2", action2)
+        val battle = BattleServiceTemp(party1, party2, logger)
 
         // Start the battle
         echo("\nBattle starting...")

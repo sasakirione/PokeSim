@@ -6,7 +6,7 @@ import event.DamageEventResult
 
 /**
  * Interface representing a held item in the game.
- * 
+ *
  * Held items can provide various effects on the Pokémon holding them,
  * such as stat boosts, damage modifications, or special abilities.
  */
@@ -23,7 +23,7 @@ interface Item {
 
     /**
      * Applies the item's effect when calculating outgoing damage.
-     * 
+     *
      * @param pokemon The Pokémon holding the item
      * @param damageEventInput The input parameters for damage calculation
      * @return The modified damage event input
@@ -32,7 +32,7 @@ interface Item {
 
     /**
      * Applies the item's effect when calculating incoming damage.
-     * 
+     *
      * @param pokemon The Pokémon holding the item
      * @param damageEventInput The input parameters for damage calculation
      * @return The modified damage event input
@@ -41,7 +41,7 @@ interface Item {
 
     /**
      * Applies the item's effect after damage calculation.
-     * 
+     *
      * @param pokemon The Pokémon holding the item
      * @param damageEventResult The result of damage calculation
      * @return The modified damage event result
@@ -50,21 +50,21 @@ interface Item {
 
     /**
      * Applies the item's effect at the start of a turn.
-     * 
+     *
      * @param pokemon The Pokémon holding the item
      */
     fun onTurnStart(pokemon: Pokemon) {}
 
     /**
      * Applies the item's effect at the end of a turn.
-     * 
+     *
      * @param pokemon The Pokémon holding the item
      */
     fun onTurnEnd(pokemon: Pokemon) {}
 
     /**
      * Modifies the Pokémon's stats.
-     * 
+     *
      * @param pokemon The Pokémon holding the item
      * @param statType The type of stat to modify
      * @param value The current value of the stat
@@ -91,7 +91,7 @@ object NoItem : Item {
 
 /**
  * An item that boosts a specific stat by a percentage.
- * 
+ *
  * @property statType The stat that this item boosts
  * @property boostPercentage The percentage by which the stat is boosted
  */
@@ -111,7 +111,7 @@ class StatBoostItem(
 
 /**
  * An item that boosts the power of specific moves.
- * 
+ *
  * @property moveType The type of moves that this item boosts
  * @property boostPercentage The percentage by which the move power is boosted
  */
@@ -139,7 +139,7 @@ class TypeBoostItem(
 object ItemFactory {
     /**
      * Creates a stat boost item.
-     * 
+     *
      * @param name The name of the item
      * @param statType The stat that this item boosts
      * @param boostPercentage The percentage by which the stat is boosted
@@ -152,7 +152,7 @@ object ItemFactory {
 
     /**
      * Creates a type boost item.
-     * 
+     *
      * @param name The name of the item
      * @param moveType The type of moves that this item boosts
      * @param boostPercentage The percentage by which the move power is boosted

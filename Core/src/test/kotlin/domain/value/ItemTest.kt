@@ -41,12 +41,17 @@ class ItemTest {
             override val maxHp: UInt
                 get() = 100u
             override var currentHp: UInt = 100u
-            override fun takeDamage(damage: UInt) { currentHp -= damage }
+            override fun takeDamage(damage: UInt) {
+                currentHp -= damage
+            }
+
             override fun isDead(): Boolean = currentHp <= 0u
         }
 
         val move = object : PokemonMove {
-            override fun getMove(index: Int): Move = Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
+            override fun getMove(index: Int): Move =
+                Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
+
             override fun getTextOfList(): String = "Test Move"
         }
 
