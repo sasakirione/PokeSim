@@ -23,7 +23,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.2")
 
     // Kotlinx serialization for JSON parsing
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 }
 
 tasks.test {
