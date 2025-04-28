@@ -1,5 +1,6 @@
 import com.github.ajalt.clikt.command.SuspendingCliktCommand
 import com.github.ajalt.clikt.command.main
+import domain.entity.Field
 import domain.entity.Party
 import event.UserEvent
 import factory.PokemonFactory
@@ -56,7 +57,7 @@ class SingleBattleG9 : SuspendingCliktCommand() {
         val logger = CliBattleLogger(this)
         val party1 = Party(listOf(pokemon1), logger, "Player 1", action1)
         val party2 = Party(listOf(pokemon2), logger, "Player 2", action2)
-        val battle = BattleServiceTemp(party1, party2, logger)
+        val battle = BattleServiceTemp(party1, party2, Field(), logger)
 
         // Start the battle
         echo("\nBattle starting...")
