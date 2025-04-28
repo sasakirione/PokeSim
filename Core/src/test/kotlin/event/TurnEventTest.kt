@@ -44,8 +44,8 @@ class TestPokemonType : PokemonType {
     override val originalTypes: List<PokemonTypeValue> = listOf(PokemonTypeValue.NORMAL)
     override var tempTypes: List<PokemonTypeValue> = listOf(PokemonTypeValue.NORMAL)
 
-    override fun getTypeMatch(moveType: PokemonTypeValue) = 1.0
-    override fun getMoveMagnification(moveType: PokemonTypeValue): Double = 1.0
+    override fun getTypeMatch(type: PokemonTypeValue) = 1.0
+    override fun getMoveMagnification(type: PokemonTypeValue): Double = 1.0
     override fun execEvent(typeEvent: TypeEvent) {}
     override fun execReturn() {}
 }
@@ -61,7 +61,7 @@ class TestPokemonStatus : PokemonStatus {
     override fun getRealD(isDirect: Boolean): Int = baseValue
     override fun getRealS(isDirect: Boolean): Int = baseValue
 
-    override fun moveAttack(category: MoveCategory): Int = 50
+    override fun moveAttack(moveCategory: MoveCategory): Int = 50
     override fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int = 10
     override fun execEvent(statusEvent: StatusEvent) {}
     override fun execReturn() {}

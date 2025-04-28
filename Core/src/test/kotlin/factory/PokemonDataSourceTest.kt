@@ -1,5 +1,6 @@
 package factory
 
+import domain.entity.PokemonStatusEvV3
 import domain.interfaces.PokemonDataSource
 import domain.value.PokemonTypeValue
 import org.junit.jupiter.api.Assertions.*
@@ -74,7 +75,7 @@ class PokemonDataSourceTest {
     fun `PokemonFactory should work with custom data source`() {
         // Arrange
         val customDataSource = object : PokemonDataSource {
-            override fun getPokemonConfig(pokemonId: Int): PokemonFactory.PokemonConfig? {
+            override fun getPokemonConfig(pokemonId: Int, ev: PokemonStatusEvV3?): PokemonFactory.PokemonConfig? {
                 return if (pokemonId == 42) {
                     PokemonFactory.PokemonConfig(
                         name = "CustomMon",
