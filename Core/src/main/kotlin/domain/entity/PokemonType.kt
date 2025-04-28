@@ -30,37 +30,37 @@ class PokemonTypeV3(
     var specialDamageType: PokemonTypeValue = NONE,
 ) : PokemonType {
 
-    override fun getTypeMatch(attack: PokemonTypeValue): Double {
+    override fun getTypeMatch(type: PokemonTypeValue): Double {
         var magnification = if (tempTypes.contains(STELLAR)) {
             // タイプがステラの場合だけオリジナルのタイプで相性計算
-            originalTypes.fold(1.0) { part, pokeType -> part * getNormalMagnification(attack, pokeType) }
+            originalTypes.fold(1.0) { part, pokeType -> part * getNormalMagnification(type, pokeType) }
         } else {
-            tempTypes.fold(1.0) { part, pokeType -> part * getNormalMagnification(attack, pokeType) }
+            tempTypes.fold(1.0) { part, pokeType -> part * getNormalMagnification(type, pokeType) }
         }
 
         // タールショット等
-        if (specialDamageType != NONE && specialDamageType == attack) {
+        if (specialDamageType != NONE && specialDamageType == type) {
             magnification = magnification * 2
         }
         return magnification
     }
 
-    override fun getMoveMagnification(moveType: PokemonTypeValue): Double {
+    override fun getMoveMagnification(type: PokemonTypeValue): Double {
         // タイプなしに一致補正が載ったら困る！
-        if (moveType == NORMAL) {
+        if (type == NORMAL) {
             return 1.0
         }
         // テラスタルじゃない場合
         if (!isTerastal) {
-            return if (tempTypes.contains(moveType)) {
+            return if (tempTypes.contains(type)) {
                 1.5
             } else {
                 1.0
             }
         }
         // テラスタルの場合　ステラの考慮なし
-        val isOriginalType = originalTypes.contains(moveType)
-        val isTerastalType = tempTypes.contains(moveType)
+        val isOriginalType = originalTypes.contains(type)
+        val isTerastalType = tempTypes.contains(type)
         return when {
             isOriginalType && isTerastalType -> 2.0
             isOriginalType || isTerastalType -> 1.5

@@ -1,5 +1,6 @@
 package event
 
+import domain.entity.Field
 import domain.entity.Party
 
 /**
@@ -33,7 +34,7 @@ sealed class Turn() {
      * @param party1 The first party participating in the turn.
      * @param party2 The second party participating in the turn.
      */
-    class TurnStart(private val party1: Party, private val party2: Party) : Turn() {
+    class TurnStart(private val party1: Party, private val party2: Party, private val field: Field) : Turn() {
 
         /**
          * Processes the asynchronous actions of both parties for the current turn.
@@ -52,14 +53,14 @@ sealed class Turn() {
 
             if (input1 is UserEvent.UserEventGiveUp) {
                 party2.logWin()
-                return TurnEnd(party1, party2, true)
+                return TurnEnd(party1, party2, true, field)
             }
 
             if (input2 is UserEvent.UserEventGiveUp) {
                 party1.logWin()
-                return TurnEnd(party1, party2, true)
+                return TurnEnd(party1, party2, true, field)
             }
-            return TurnStep1(party1, party2, input1, input2)
+            return TurnStep1(party1, party2, input1, input2, field)
         }
     }
 
@@ -78,11 +79,13 @@ sealed class Turn() {
         private val party1: Party,
         private val party2: Party,
         private val userEvent1: UserEvent,
-        private val userEvent2: UserEvent
+        private val userEvent2: UserEvent,
+        private val field: Field,
     ) : Turn() {
         override fun process(): Turn {
             party1.onTurnStart()
             party2.onTurnStart()
+            field.onTurnStart()
 
             val side1Action = party1.getAction(userEvent1)
             val side2Action = party2.getAction(userEvent2)
@@ -95,7 +98,7 @@ sealed class Turn() {
             val player1 = TurnAction(party1, side1Action)
             val player2 = TurnAction(party2, side2Action)
 
-            return TurnMove.TurnStep1stMove(player1, player2, isPlayer1Faster)
+            return TurnMove.TurnStep1stMove(player1, player2, isPlayer1Faster, field)
         }
 
         /**
@@ -196,7 +199,8 @@ sealed class Turn() {
         class TurnStep1stMove(
             private val player1: TurnAction,
             private val player2: TurnAction,
-            private val isPlayer1First: Boolean
+            private val isPlayer1First: Boolean,
+            private val field: Field,
         ) : TurnMove(
         ) {
             override fun process(): Turn {
@@ -208,9 +212,9 @@ sealed class Turn() {
                     } else { false }
 
                 if (isFinished) {
-                    return TurnStep2ndMoveSkip(player1, player2)
+                    return TurnStep2ndMoveSkip(player1, player2, field)
                 }
-                return TurnStep2ndMove(player1, player2, isPlayer1First)
+                return TurnStep2ndMove(player1, player2, isPlayer1First, field)
             }
         }
 
@@ -231,6 +235,7 @@ sealed class Turn() {
             private val player1: TurnAction,
             private val player2: TurnAction,
             private val isPlayer1First: Boolean,
+            private val field: Field,
         ) : TurnMove(
         ) {
             override fun process(): Turn {
@@ -240,7 +245,7 @@ sealed class Turn() {
                     } else if ((player1.action is ActionEvent.ActionEventMove)) {
                         executeAttack(player1, player2)
                     } else { false }
-                return TurnEnd(player1.party, player2.party, isFinished)
+                return TurnEnd(player1.party, player2.party, isFinished, field)
             }
         }
 
@@ -258,10 +263,11 @@ sealed class Turn() {
         class TurnStep2ndMoveSkip(
             private val player1: TurnAction,
             private val player2: TurnAction,
+            private val field: Field,
         ) : TurnMove(
         ) {
             override fun process(): Turn {
-                return TurnEnd(player1.party, player2.party, true)
+                return TurnEnd(player1.party, player2.party, true, field)
             }
         }
     }
@@ -278,10 +284,11 @@ sealed class Turn() {
      * @param party2 The second party involved in the turn.
      * @param isFinish Flag indicating if the turn process is finished.
      */
-    class TurnEnd(party1: Party, party2: Party, val isFinish: Boolean) : Turn() {
+    class TurnEnd(party1: Party, party2: Party, val isFinish: Boolean, field: Field) : Turn() {
         init {
             party1.onTurnEnd()
             party2.onTurnEnd()
+            field.onTurnEnd()
         }
     }
 }

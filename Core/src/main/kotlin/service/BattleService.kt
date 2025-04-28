@@ -1,5 +1,6 @@
 package service
 
+import domain.entity.Field
 import domain.entity.Party
 import event.Turn
 
@@ -14,6 +15,7 @@ import event.Turn
 class BattleService(
     private val party1: Party,
     private val party2: Party,
+    private val field: Field = Field(),
     private val logger: BattleLogger = DefaultBattleLogger()
 ) {
     /**
@@ -40,7 +42,7 @@ class BattleService(
         while (true) {
             logger.logWithNewLine("=== Turn $turnCount ===")
 
-            val step1 = Turn.TurnStart(party1, party2).processAsync()
+            val step1 = Turn.TurnStart(party1, party2, field).processAsync()
             if (step1 !is Turn.TurnStep1) {
                 break
             }

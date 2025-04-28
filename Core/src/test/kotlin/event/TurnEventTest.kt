@@ -1,5 +1,6 @@
 package event
 
+import domain.entity.Field
 import domain.entity.Party
 import domain.entity.Pokemon
 import domain.interfaces.PokemonHp
@@ -84,6 +85,7 @@ class TurnEventTest {
     private lateinit var pokemon2: Pokemon
     private lateinit var party1: Party
     private lateinit var party2: Party
+    private lateinit var field: Field
     private lateinit var user1stActionFunc1: User1stActionFunc
     private lateinit var user1stActionFunc2: User1stActionFunc
 
@@ -118,13 +120,14 @@ class TurnEventTest {
         // Create parties
         party1 = Party(listOf(pokemon1), logger, "Player 1", user1stActionFunc1)
         party2 = Party(listOf(pokemon2), logger, "Player 2", user1stActionFunc2)
+        field = Field()
     }
 
     @Test
     fun testTurnStartProcessAsyncWithNormalActions() {
         runBlocking {
             // Arrange
-            val turnStart = Turn.TurnStart(party1, party2)
+            val turnStart = Turn.TurnStart(party1, party2, field)
 
             // Act
             val result = turnStart.processAsync()
@@ -141,7 +144,7 @@ class TurnEventTest {
             // Arrange
             user1stActionFunc1 = { CompletableDeferred(UserEvent.UserEventGiveUp()) }
             party1 = Party(listOf(pokemon1), logger, "Player 1", user1stActionFunc1)
-            val turnStart = Turn.TurnStart(party1, party2)
+            val turnStart = Turn.TurnStart(party1, party2, field)
 
             // Act
             val result = turnStart.processAsync()
@@ -160,7 +163,7 @@ class TurnEventTest {
             // Arrange
             user1stActionFunc2 = { CompletableDeferred(UserEvent.UserEventGiveUp()) }
             party2 = Party(listOf(pokemon2), logger, "Player 2", user1stActionFunc2)
-            val turnStart = Turn.TurnStart(party1, party2)
+            val turnStart = Turn.TurnStart(party1, party2, field)
 
             // Act
             val result = turnStart.processAsync()
@@ -178,7 +181,7 @@ class TurnEventTest {
         // Arrange
         val userEvent1 = UserEvent.UserEventMoveSelect(0)
         val userEvent2 = UserEvent.UserEventMoveSelect(0)
-        val turnStep1 = Turn.TurnStep1(party1, party2, userEvent1, userEvent2)
+        val turnStep1 = Turn.TurnStep1(party1, party2, userEvent1, userEvent2, field)
 
         // Act
         val result = turnStep1.process()
@@ -194,7 +197,7 @@ class TurnEventTest {
         val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
         val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
 
-        val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, player2Action, true)
+        val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, player2Action, true, field)
 
         // Act
         val result = turnStep1stMove.process()
@@ -213,7 +216,7 @@ class TurnEventTest {
         val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
         val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
 
-        val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, player2Action, false)
+        val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, player2Action, false, field)
 
         // Act
         val result = turnStep1stMove.process()
@@ -243,7 +246,7 @@ class TurnEventTest {
         )
         val faintedParty = Party(listOf(faintedPokemon), logger, "Player 2", user1stActionFunc2)
 
-        val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, TurnAction(faintedParty, player2Action.action), true)
+        val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, TurnAction(faintedParty, player2Action.action), true, field)
 
         // Act
         val result = turnStep1stMove.process()
@@ -260,7 +263,7 @@ class TurnEventTest {
         val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
         val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
 
-        val turnStep2ndMove = Turn.TurnMove.TurnStep2ndMove(player1Action, player2Action, true)
+        val turnStep2ndMove = Turn.TurnMove.TurnStep2ndMove(player1Action, player2Action, true, field)
 
         // Act
         val result = turnStep2ndMove.process()
@@ -278,7 +281,7 @@ class TurnEventTest {
         val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
         val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
 
-        val turnStep2ndMoveSkip = Turn.TurnMove.TurnStep2ndMoveSkip(player1Action, player2Action)
+        val turnStep2ndMoveSkip = Turn.TurnMove.TurnStep2ndMoveSkip(player1Action, player2Action, field)
 
         // Act
         val result = turnStep2ndMoveSkip.process()
@@ -292,7 +295,7 @@ class TurnEventTest {
     @Test
     fun testTurnEndInitialization() {
         // Arrange & Act
-        val turnEnd = Turn.TurnEnd(party1, party2, true)
+        val turnEnd = Turn.TurnEnd(party1, party2, true, field)
 
         // Assert
         assertTrue(turnEnd.isFinish)
