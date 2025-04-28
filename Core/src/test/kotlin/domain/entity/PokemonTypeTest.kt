@@ -198,4 +198,38 @@ class PokemonTypeTest {
             pokemonType.getTypeMatch(QUESTION)
         }
     }
+
+    @Test
+    fun testTypeMatch2() {
+        // Flutter Mane
+        val pokemonType = PokemonTypeV3(
+            originalTypes = listOf(GHOST, FAIRLY),
+        )
+
+        assertEquals(2.0, pokemonType.getTypeMatch(STEEL))
+        assertEquals(2.0, pokemonType.getTypeMatch(GHOST))
+        assertEquals(1.0, pokemonType.getTypeMatch(WATER))
+        assertEquals(0.25, pokemonType.getTypeMatch(BUG))
+        assertEquals(0.0, pokemonType.getTypeMatch(DRAGON))
+        assertEquals(0.0, pokemonType.getTypeMatch(FIGHTING))
+        assertEquals(0.0, pokemonType.getTypeMatch(NORMAL))
+    }
+
+    @Test
+    fun testTypeMatch3() {
+        // Iron Hands
+        val pokemonType = PokemonTypeV3(
+            originalTypes = listOf(FIGHTING, ELECTRIC),
+        )
+
+        assertEquals(2.0, pokemonType.getTypeMatch(GROUND))
+        assertEquals(2.0, pokemonType.getTypeMatch(FAIRLY))
+        assertEquals(2.0, pokemonType.getTypeMatch(PSYCHIC))
+        assertEquals(1.0, pokemonType.getTypeMatch(WATER))
+        assertEquals(0.5, pokemonType.getTypeMatch(STEEL))
+        assertEquals(0.5, pokemonType.getTypeMatch(BUG))
+        assertEquals(0.5, pokemonType.getTypeMatch(ROCK))
+        assertEquals(0.5, pokemonType.getTypeMatch(DARK))
+        assertEquals(0.5, pokemonType.getTypeMatch(ELECTRIC))
+    }
 }

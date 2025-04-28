@@ -325,6 +325,7 @@ class PokemonTypeV3(
     private fun typeCompatibilityFighting(defense: PokemonTypeValue): Double = when (defense) {
         NORMAL, ICE, ROCK, DARK, STEEL -> 2.0
         POISON, FLYING, PSYCHIC, BUG, FAIRLY -> 0.5
+        GHOST -> 0.0
         else -> 1.0
     }
 
