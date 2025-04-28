@@ -224,6 +224,16 @@ class PokemonStatusEvV3(
             require(sum in 0..510) { "sum should be between 0 and 510" }
         }
     }
+
+    @Suppress("unused")
+    companion object {
+        val evCs = PokemonStatusEvV3(EvV2(4), EvV2(0), EvV2(252), EvV2(0), EvV2(0), EvV2(252))
+        val evAs = PokemonStatusEvV3(EvV2(4), EvV2(252), EvV2(0), EvV2(0), EvV2(0), EvV2(252))
+        val evHa = PokemonStatusEvV3(EvV2(252), EvV2(252), EvV2(0), EvV2(0), EvV2(0), EvV2(4))
+        val evHc = PokemonStatusEvV3(EvV2(252), EvV2(0), EvV2(0), EvV2(252), EvV2(0), EvV2(4))
+        val evHb = PokemonStatusEvV3(EvV2(252), EvV2(0), EvV2(252), EvV2(0), EvV2(0), EvV2(4))
+        val evHd = PokemonStatusEvV3(EvV2(252), EvV2(0), EvV2(0), EvV2(0), EvV2(252), EvV2(4))
+    }
 }
 
 /**

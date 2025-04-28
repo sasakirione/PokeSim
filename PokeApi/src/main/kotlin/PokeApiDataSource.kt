@@ -1,3 +1,4 @@
+import domain.entity.PokemonStatusEvV3
 import domain.interfaces.PokemonDataSource
 import domain.value.MoveCategory
 import domain.value.PokemonTypeValue
@@ -48,7 +49,7 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
      * @param pokemonId The ID of the Pokémon to retrieve.
      * @return The Pokémon configuration if found, null otherwise.
      */
-    override fun getPokemonConfig(pokemonId: Int): PokemonFactory.PokemonConfig? {
+    override fun getPokemonConfig(pokemonId: Int, ev: PokemonStatusEvV3?): PokemonFactory.PokemonConfig? {
         // Check cache first
         if (pokemonConfigCache.containsKey(pokemonId)) {
             return pokemonConfigCache[pokemonId]
@@ -105,7 +106,8 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
      */
     private fun convertToPokemonConfig(
         pokemonResponse: PokemonResponse,
-        moveResponses: List<MoveResponse>
+        moveResponses: List<MoveResponse>,
+        ev: PokemonStatusEvV3? = null
     ): PokemonFactory.PokemonConfig {
         // Convert types
         val types = pokemonResponse.types.map { typeSlot ->
@@ -127,12 +129,12 @@ class PokeApiDataSource(private val environment: Environment = Environment.PRODU
 
         // Create default EVs (could be randomised or configurable in the future)
         val evs = PokemonFactory.StatDistribution(
-            hp = 0,
-            atk = 0,
-            def = 0,
-            spAtk = 252,
-            spDef = 4,
-            spd = 252
+            hp = ev?.h?.value ?: 0,
+            atk = ev?.a?.value ?: 0,
+            def = ev?.b?.value ?: 0,
+            spAtk = ev?.c?.value ?: 252,
+            spDef = ev?.d?.value ?: 4,
+            spd = ev?.s?.value ?: 252
         )
 
         // Convert moves

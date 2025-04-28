@@ -1,5 +1,6 @@
 package domain.interfaces
 
+import domain.entity.PokemonStatusEvV3
 import factory.PokemonFactory
 
 /**
@@ -14,7 +15,7 @@ interface PokemonDataSource {
      * @param pokemonId The ID of the Pokémon to retrieve.
      * @return The Pokémon configuration if found, null otherwise.
      */
-    fun getPokemonConfig(pokemonId: Int): PokemonFactory.PokemonConfig?
+    fun getPokemonConfig(pokemonId: Int, ev: PokemonStatusEvV3?=null): PokemonFactory.PokemonConfig?
 
     /**
      * Checks if a Pokémon with the given ID exists in this data source.

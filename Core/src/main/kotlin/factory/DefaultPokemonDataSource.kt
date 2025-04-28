@@ -1,5 +1,6 @@
 package factory
 
+import domain.entity.PokemonStatusEvV3
 import domain.interfaces.PokemonDataSource
 import domain.value.MoveCategory
 import domain.value.Nature
@@ -24,7 +25,7 @@ class DefaultPokemonDataSource : PokemonDataSource {
      * @param pokemonId The ID of the Pokémon to retrieve.
      * @return The Pokémon configuration if found, null otherwise.
      */
-    override fun getPokemonConfig(pokemonId: Int): PokemonConfig? {
+    override fun getPokemonConfig(pokemonId: Int, ev: PokemonStatusEvV3?): PokemonConfig? {
         return pokemonConfigs[pokemonId]
     }
 
