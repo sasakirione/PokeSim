@@ -1,7 +1,10 @@
 package domain.value
 
 /**
- * タイプ自体を表すEnum
+ * Represents the various Pokémon types in the game.
+ *
+ * Pokémon types define characteristics of Pokémon and moves,
+ * as well as their strengths and weaknesses in battles.
  */
 enum class PokemonTypeValue {
     /**

@@ -100,7 +100,12 @@ class PokemonTypeV3(
     }
 
     /**
-     * テラスタルの処理を行う
+     * Changes the Pokémon's type to its Terastal type if it has not already done so
+     * and the Terastal type is not `NONE`.
+     *
+     * This method sets `tempTypes` to a list containing the Pokémon's `terastalTypes`
+     * and updates the `isTerastal` flag to `true`.
+     * If the Pokémon is already Terastal or its Terastal type is `NONE`, no action is performed.
      */
     fun doTerastal() {
         if (isTerastal || terastalTypes == NONE) {
@@ -110,6 +115,15 @@ class PokemonTypeV3(
         isTerastal = true
     }
 
+    /**
+     * Calculates the type compatibility multiplier for a Pokémon move based on its attack type and the opponent's defence type.
+     *
+     * @param attack The attack type used by the move.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility, such as 2.0, 0.5, or 0.0.
+     *         Returns 1.0 for neutral compatibility or unsupported types.
+     * @throws NotSupportVersion If the type compatibility for the given attack type is not supported (e.g. type "???").
+     */
     private fun getNormalMagnification(attack: PokemonTypeValue, defense: PokemonTypeValue): Double = when (attack) {
         NORMAL -> typeCompatibilityNormal(defense)
         FIGHTING -> typeCompatibilityFighting(defense)
@@ -131,14 +145,14 @@ class PokemonTypeV3(
         FAIRLY -> typeCompatibilityFairly(defense)
         NONE -> 1.0
         STELLAR -> 1.0
-        // 第6世代以降でのろいの？？？タイプが実装されたことはなし
+        // No type ??? of cursing has been implemented in the 6th generation or later.
         QUESTION -> throw NotSupportVersion("Type:??? not supported yet")
     }
 
     /**
-     * フェアリー技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a FAIRLY type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityFairly(defense: PokemonTypeValue): Double = when (defense) {
         FIGHTING, DARK, DRAGON -> 2.0
@@ -147,9 +161,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * あく技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a DARK type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityDark(defense: PokemonTypeValue): Double = when (defense) {
         PSYCHIC, GHOST -> 2.0
@@ -158,9 +172,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * ドラゴン技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a DRAGON type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityDragon(defense: PokemonTypeValue): Double = when (defense) {
         DRAGON -> 2.0
@@ -170,9 +184,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * こおり技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for an ICE type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityIce(defense: PokemonTypeValue): Double = when (defense) {
         GRASS, GROUND, FLYING, DRAGON -> 2.0
@@ -181,9 +195,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * エスパー技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a PSYCHIC type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityPsychic(defense: PokemonTypeValue): Double = when (defense) {
         FIGHTING, POISON -> 2.0
@@ -193,9 +207,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * でんき技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for an ELECTRIC type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityElectric(defense: PokemonTypeValue): Double = when (defense) {
         WATER, FLYING -> 2.0
@@ -205,9 +219,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * くさ技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a GRASS type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityGrass(defense: PokemonTypeValue): Double = when (defense) {
         WATER, GROUND, ROCK -> 2.0
@@ -216,9 +230,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * みず技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a Water type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityWater(defense: PokemonTypeValue): Double = when (defense) {
         FIRE, GROUND, ROCK -> 2.0
@@ -227,9 +241,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * ほのお技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a FIRE type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityFire(defense: PokemonTypeValue): Double = when (defense) {
         GRASS, ICE, BUG, STEEL -> 2.0
@@ -238,9 +252,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * はがね技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a STEEL type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilitySteel(defense: PokemonTypeValue): Double = when (defense) {
         ICE, ROCK, FAIRLY -> 2.0
@@ -249,9 +263,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * ゴースト技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a GHOST type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityGhost(defense: PokemonTypeValue): Double = when (defense) {
         PSYCHIC, GHOST -> 2.0
@@ -261,9 +275,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * むし技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a BUG type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityBug(defense: PokemonTypeValue): Double = when (defense) {
         GRASS, PSYCHIC, DARK -> 2.0
@@ -272,9 +286,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * いわ技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a ROCK type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityRock(defense: PokemonTypeValue): Double = when (defense) {
         FIRE, FLYING, ICE, BUG -> 2.0
@@ -283,9 +297,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * じめん技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a GROUND type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityGround(defense: PokemonTypeValue): Double = when (defense) {
         FIRE, ELECTRIC, POISON, ROCK, STEEL -> 2.0
@@ -295,9 +309,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * どく技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a POISON type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityPoison(defense: PokemonTypeValue): Double = when (defense) {
         GRASS, FAIRLY -> 2.0
@@ -307,9 +321,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * ひこう技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a FLYING type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityFlying(defense: PokemonTypeValue): Double = when (defense) {
         GRASS, FIGHTING, BUG -> 2.0
@@ -318,9 +332,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * かくとう技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a FIGHTING type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityFighting(defense: PokemonTypeValue): Double = when (defense) {
         NORMAL, ICE, ROCK, DARK, STEEL -> 2.0
@@ -330,9 +344,9 @@ class PokemonTypeV3(
     }
 
     /**
-     * ノーマル技に対するタイプ相性の倍率
-     * @param defense 受けるタイプ
-     * @return タイプ相性の倍率
+     * Calculates the type compatibility multiplier for a NORMAL type.
+     * @param defense The defence type of the opponent.
+     * @return A multiplier representing the type compatibility
      */
     private fun typeCompatibilityNormal(defense: PokemonTypeValue): Double = when (defense) {
         ROCK, STEEL -> 0.5
