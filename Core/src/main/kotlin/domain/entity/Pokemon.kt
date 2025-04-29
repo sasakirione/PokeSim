@@ -4,10 +4,7 @@ import domain.interfaces.PokemonHp
 import domain.interfaces.PokemonMove
 import domain.interfaces.PokemonStatus
 import domain.interfaces.PokemonType
-import domain.value.Item
-import domain.value.MoveCategory
-import domain.value.NoItem
-import domain.value.StatType
+import domain.value.*
 import event.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -33,7 +30,8 @@ class Pokemon(
     val hp: PokemonHp,
     val pokemonMove: PokemonMove,
     val level: Int,
-    val heldItem: Item = NoItem
+    val heldItem: Item = NoItem,
+    val ability: Ability = NoAbility
 ) {
     /**
      * Processes a user event and converts it into an appropriate battle action.
@@ -62,6 +60,9 @@ class Pokemon(
                 // Apply held item effects to outgoing damage
                 damageEventInput = heldItem.modifyOutgoingDamage(this, damageEventInput)
 
+                // Apply ability effects to outgoing damage
+                damageEventInput = ability.modifyOutgoingDamage(this, damageEventInput)
+
                 return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, damageEventInput.attackIndex)
             }
 
@@ -77,18 +78,27 @@ class Pokemon(
     }
 
     /**
-     * Executes the item effect associated with the Pokémon at the start of its turn.
+     * Executes the item and ability effects associated with the Pokémon at the start of its turn.
      *
-     * This method invokes the held item's `onTurnStart` functionality,
+     * This method invokes both the held item's and ability's `onTurnStart` functionality,
      * passing the current instance of the Pokémon.
-     * The effect applied depends on the specific item held by the Pokémon.
+     * The effects applied to depend on the specific item held and ability possessed by the Pokémon.
      */
     fun onTurnStart() {
         heldItem.onTurnStart(this)
+        ability.onTurnStart(this)
     }
 
+    /**
+     * Executes the item and ability effects associated with the Pokémon at the end of its turn.
+     *
+     * This method invokes both the held item's and ability's `onTurnEnd` functionality,
+     * passing the current instance of the Pokémon.
+     * The effects applied to depend on the specific item held and ability possessed by the Pokémon.
+     */
     fun onTurnEnd() {
         heldItem.onTurnEnd(this)
+        ability.onTurnEnd(this)
     }
 
     /**
@@ -102,7 +112,9 @@ class Pokemon(
     fun getFinalSpeed(): Int {
         val baseSpeed = status.getRealS()
         // Apply held item effects to speed stat
-        return heldItem.modifyStat(this, StatType.SPEED, baseSpeed)
+        val itemModifiedSpeed = heldItem.modifyStat(this, StatType.SPEED, baseSpeed)
+        // Apply ability effects to speed stat
+        return ability.modifyStat(this, StatType.SPEED, itemModifiedSpeed)
     }
 
     /**
@@ -165,11 +177,9 @@ class Pokemon(
      * @return A DamageEventResult indicating whether the Pokémon is still alive or has fainted
      */
     fun calculateDamage(input: DamageEventInput): DamageEventResult {
-        // Apply held item effects to incoming damage
-        val modifiedInput = heldItem.modifyIncomingDamage(this, input)
 
-        val typeCompatibility = type.getTypeMatch(modifiedInput.move.type)
-        val damage = status.calculateDamage(modifiedInput, typeCompatibility)
+        val typeCompatibility = type.getTypeMatch(input.move.type)
+        val damage = status.calculateDamage(input, typeCompatibility)
         hp.takeDamage(damage.toUInt())
 
         val result: DamageEventResult = if (hp.isDead()) {
@@ -178,8 +188,7 @@ class Pokemon(
             DamageEventResult.DamageEventResultAlive(emptyList(), damage)
         }
 
-        // Apply held item effects after damage calculation
-        return heldItem.afterDamage(this, result)
+        return result
     }
 
     /**

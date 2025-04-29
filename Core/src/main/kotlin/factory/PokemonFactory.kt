@@ -17,7 +17,8 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
         val ivs: StatDistribution = StatDistribution(31, 31, 31, 31, 31, 31),
         val moves: List<MoveConfig>,
         val level: Int = 50,
-        val nature: Nature = Nature.HARDY
+        val nature: Nature = Nature.HARDY,
+        val ability: Ability = NoAbility
     )
 
     /**
@@ -120,7 +121,7 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
         val pokemonMoves = PokemonMoveV3(moves)
 
         // Create and return Pokémon
-        return Pokemon(config.name, type, status, hp, pokemonMoves, config.level)
+        return Pokemon(config.name, type, status, hp, pokemonMoves, config.level, ability = config.ability)
     }
 
 }
