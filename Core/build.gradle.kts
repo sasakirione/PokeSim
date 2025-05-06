@@ -17,7 +17,7 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx-coroutines:2.1.1")
 
     // Ktor client for HTTP requests
-    implementation("io.ktor:ktor-client-core:3.1.2")
+    implementation("io.ktor:ktor-client-core:3.1.3")
     implementation("io.ktor:ktor-client-cio:3.1.2")
     implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.2")
