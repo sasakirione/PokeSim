@@ -6,8 +6,6 @@ import domain.interfaces.PokemonStatus
 import domain.interfaces.PokemonType
 import domain.value.*
 import event.*
-import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.floor
 
 /**
@@ -154,7 +152,6 @@ class Pokemon(
         return hp.maxHp
     }
 
-    // TODO: Depends on Java (Be Pure Kotlin someday)
     /**
      * Rounds the given double value to the nearest integer using the HALF_DOWN rounding mode.
      *
@@ -162,9 +159,13 @@ class Pokemon(
      * @return The resulting integer after rounding.
      */
     private fun fiveOutOverFiveIn(i: Double): Int {
-        val bigDecimal = BigDecimal(i.toString())
-        val resBD = bigDecimal.setScale(0, RoundingMode.HALF_DOWN)
-        return resBD.toDouble().toInt()
+        val fraction = i - i.toInt()
+        return when {
+            // If fraction is exactly 0.5, round down
+            fraction == 0.5 -> i.toInt()
+            // Otherwise use standard rounding
+            else -> kotlin.math.round(i).toInt()
+        }
     }
 
     /**

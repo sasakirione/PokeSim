@@ -9,7 +9,7 @@ import domain.entity.PokemonFigureIvV3
 import domain.entity.PokemonStatusBase
 import domain.entity.PokemonStatusEvV3
 import event.DamageEventInput
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AbilityTest {
