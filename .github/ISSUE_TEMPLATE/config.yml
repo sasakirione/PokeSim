@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🤔 Questions & Discussions
+    url: https://github.com/sasakirione/PokeSim/discussions
+    about: Please ask and answer questions here
+  - name: 🔒 Security Issues
+    url: https://github.com/sasakirione/PokeSim/security/policy
+    about: Please report security vulnerabilities directly to the maintainers

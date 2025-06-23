@@ -17,11 +17,6 @@ sealed interface Ability {
     val name: String
 
     /**
-     * The description of the ability's effect.
-     */
-    val description: String
-
-    /**
      * Applies the ability's effect when calculating outgoing damage.
      *
      * @param pokemon The Pokémon with this ability
@@ -79,7 +74,6 @@ sealed interface Ability {
  */
 object NoAbility : Ability {
     override val name: String = "None"
-    override val description: String = "No special ability."
 }
 
 /**
@@ -90,7 +84,6 @@ object NoAbility : Ability {
  */
 class StatBoostAbility(
     override val name: String,
-    override val description: String,
     private val statType: StatType,
     private val boostPercentage: Int
 ) : Ability {
@@ -110,7 +103,6 @@ class StatBoostAbility(
  */
 class TypeBoostAbility(
     override val name: String,
-    override val description: String,
     private val moveType: PokemonTypeValue,
     private val boostPercentage: Int
 ) : Ability {
@@ -139,8 +131,7 @@ object AbilityFactory {
      * @return A new StatBoostAbility
      */
     fun createStatBoostAbility(name: String, statType: StatType, boostPercentage: Int): StatBoostAbility {
-        val description = "Boosts ${statType.name.lowercase().replace('_', ' ')} by $boostPercentage%."
-        return StatBoostAbility(name, description, statType, boostPercentage)
+        return StatBoostAbility(name, statType, boostPercentage)
     }
 
     /**
@@ -152,13 +143,12 @@ object AbilityFactory {
      * @return A new TypeBoostAbility
      */
     fun createTypeBoostAbility(name: String, moveType: PokemonTypeValue, boostPercentage: Int): TypeBoostAbility {
-        val description = "Powers up ${moveType.name.lowercase()}-type moves by $boostPercentage%."
-        return TypeBoostAbility(name, description, moveType, boostPercentage)
+        return TypeBoostAbility(name, moveType, boostPercentage)
     }
 
     // Common abilities
     val SPEED_BOOST = createStatBoostAbility("Speed Boost", StatType.SPEED, 10)
-    val HUGE_POWER = createStatBoostAbility("Huge Power", StatType.ATTACK, 50)
+    val HUGE_POWER = createStatBoostAbility("Huge Power", StatType.ATTACK, 100)
     val BLAZE = createTypeBoostAbility("Blaze", PokemonTypeValue.FIRE, 50)
     val TORRENT = createTypeBoostAbility("Torrent", PokemonTypeValue.WATER, 50)
     val OVERGROW = createTypeBoostAbility("Overgrow", PokemonTypeValue.GRASS, 50)

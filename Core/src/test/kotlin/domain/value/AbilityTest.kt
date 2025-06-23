@@ -8,20 +8,16 @@ import domain.entity.PokemonTypeV3
 import domain.entity.PokemonFigureIvV3
 import domain.entity.PokemonStatusBase
 import domain.entity.PokemonStatusEvV3
-import domain.value.EvV2
-import domain.value.IvV2
-import domain.value.Nature
 import event.DamageEventInput
-import event.DamageEventResult
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import kotlin.test.assertEquals
 
 class AbilityTest {
 
     @Test
     fun `test StatBoostAbility modifies stat correctly`() {
         // Create a stat boost ability that increases speed by 50%
-        val speedBoost = StatBoostAbility("Speed Boost", "Boosts speed by 50%", StatType.SPEED, 50)
+        val speedBoost = StatBoostAbility("Speed Boost", StatType.SPEED, 50)
 
         // Create a test Pokemon with the ability
         val pokemon = createTestPokemon(ability = speedBoost)
@@ -38,12 +34,12 @@ class AbilityTest {
     @Test
     fun `test TypeBoostAbility modifies outgoing damage correctly`() {
         // Create a type boost ability that increases fire move power by 50%
-        val blaze = TypeBoostAbility("Blaze", "Powers up fire-type moves by 50%", PokemonTypeValue.FIRE, 50)
+        val blaze = TypeBoostAbility("Blaze", PokemonTypeValue.FIRE, 50)
 
         // Create a test Pokemon with the ability
         val pokemon = createTestPokemon(ability = blaze)
 
-        // Create a fire move with 100 attack index
+        // Create a fire move with 100 attack indexes
         val fireMove = Move("Flamethrower", PokemonTypeValue.FIRE, MoveCategory.SPECIAL, 90, 100, 0)
         val damageInput = DamageEventInput(fireMove, 100)
 
@@ -55,13 +51,13 @@ class AbilityTest {
 
     @Test
     fun `test TypeBoostAbility does not modify non-matching type moves`() {
-        // Create a type boost ability that increases fire move power by 50%
-        val blaze = TypeBoostAbility("Blaze", "Powers up fire-type moves by 50%", PokemonTypeValue.FIRE, 50)
+        // Create a type boost ability that increases fire
+        val blaze = TypeBoostAbility("Blaze", PokemonTypeValue.FIRE, 50)
 
         // Create a test Pokemon with the ability
         val pokemon = createTestPokemon(ability = blaze)
 
-        // Create a water move with 100 attack index
+        // Create a water move with 100 attack indexes
         val waterMove = Move("Water Gun", PokemonTypeValue.WATER, MoveCategory.SPECIAL, 40, 100, 0)
         val damageInput = DamageEventInput(waterMove, 100)
 
@@ -76,7 +72,7 @@ class AbilityTest {
         // Create a test Pokemon with no ability
         val pokemon = createTestPokemon(ability = NoAbility)
 
-        // Create a move with 100 attack index
+        // Create a move with 100 attack indexes
         val move = Move("Tackle", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 40, 100, 0)
         val damageInput = DamageEventInput(move, 100)
 
