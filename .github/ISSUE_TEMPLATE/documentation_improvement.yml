@@ -1,0 +1,90 @@
+name: 📚 Documentation Improvement
+description: Use this template to suggest improvements to PokéSim documentation
+title: 'Docs: '
+labels: ['documentation']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve PokéSim's documentation! Clear and comprehensive documentation is essential for the project's success.
+
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation needs improvement?
+      options:
+        - README
+        - API Documentation
+        - Code Comments
+        - Examples
+        - Tutorials
+        - Architecture Overview
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Where is the documentation that needs improvement?
+      placeholder: e.g., "docs/CoreAPI.md", "README.md", or "Core/src/main/kotlin/domain/value/Ability.kt"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_state
+    attributes:
+      label: Current State
+      description: What does the current documentation say or not say?
+      placeholder: The current documentation is missing information about how to use the TypeBoostAbility class.
+    validations:
+      required: true
+
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Suggested Improvement
+      description: What changes would you like to see?
+      placeholder: |
+        Add a section explaining how to use TypeBoostAbility with examples:
+        
+        ```kotlin
+        // Example of creating and using a TypeBoostAbility
+        val fireBoost = TypeBoostAbility("Blaze", PokemonTypeValue.FIRE, 50)
+        val pokemon = createPokemon(ability = fireBoost)
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this documentation improvement important?
+      placeholder: This improvement would help new users understand how to implement custom abilities in their Pokémon.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: willing_to_contribute
+    attributes:
+      label: Contribution
+      description: Are you willing to contribute this documentation improvement?
+      options:
+        - Yes, I'm willing to submit a PR with this change
+        - No, I'm just suggesting the improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: I've seen similar documentation in other projects that was very helpful.
+    validations:
+      required: false

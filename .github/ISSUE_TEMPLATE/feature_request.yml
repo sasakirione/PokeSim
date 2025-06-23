@@ -1,5 +1,5 @@
 name: ✨ Feature request
-description: Use this template to suggest new features or improvements
+description: Use this template to suggest new features or improvements for PokéSim
 title: 'Feature: '
 labels: ['enhancement']
 assignees: []
@@ -8,13 +8,47 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for your contribution idea! Please share as much detail as you can so we can evaluate and prioritize it effectively.
+        Thanks for your contribution idea to PokéSim! Please share as much detail as you can so we can evaluate and prioritize it effectively.
 
   - type: input
     id: feature
     attributes:
       label: Feature Title
-      placeholder: e.g., “Add filtering to the user list view”
+      placeholder: e.g., "Add support for weather effects in battles"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Target Module
+      description: Which module would this feature be part of?
+      options:
+        - Core (battle mechanics)
+        - CLI (command-line interface)
+        - PokeAPI (data fetching)
+        - Multiple modules
+        - New module (please specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: generation
+    attributes:
+      label: Pokémon Generation
+      description: Which Pokémon game generation is this feature related to?
+      options:
+        - Gen 1 (Red/Blue/Yellow)
+        - Gen 2 (Gold/Silver/Crystal)
+        - Gen 3 (Ruby/Sapphire/Emerald)
+        - Gen 4 (Diamond/Pearl/Platinum)
+        - Gen 5 (Black/White)
+        - Gen 6 (X/Y)
+        - Gen 7 (Sun/Moon)
+        - Gen 8 (Sword/Shield)
+        - Gen 9 (Scarlet/Violet)
+        - Multiple generations
+        - Not specific to any generation
     validations:
       required: true
 
@@ -23,7 +57,7 @@ body:
     attributes:
       label: Motivation / Background
       description: Why is this feature needed? What problem does it solve?
-      placeholder: Users need to quickly narrow down results when the list is long
+      placeholder: This feature would make battles more realistic by implementing weather effects like Rain, Sun, Sandstorm, etc., which affect move damage and Pokémon stats.
     validations:
       required: true
 
@@ -31,17 +65,51 @@ body:
     id: proposal
     attributes:
       label: Proposed Solution
-      description: Describe your idea in detail (UI changes, expected behavior, etc.)
-      placeholder: Add a dropdown to select status, with checkboxes for multi-select
+      description: Describe your idea in detail (implementation approach, expected behavior, etc.)
+      placeholder: |
+        Add a Weather class that can be:
+        1. Set at the beginning of battle
+        2. Changed by moves like "Rain Dance"
+        3. Affects damage calculation (e.g., Water moves do more damage in Rain)
+        4. Affects certain Pokémon (e.g., Solar Power ability is boosted in Sun)
+        5. Can cause damage at the end of each turn (e.g., Sandstorm)
     validations:
       required: true
+
+  - type: textarea
+    id: code_example
+    attributes:
+      label: Example Usage
+      description: If possible, provide a code example of how this feature would be used
+      placeholder: |
+        ```kotlin
+        // Example of setting up a battle with weather
+        val battleService = BattleService(
+            pokemon1, 
+            pokemon2,
+            battleConditions = BattleConditions(weather = Weather.RAIN)
+        )
+
+        // Example of a move changing weather
+        val rainDance = Move(
+            name = "Rain Dance",
+            type = PokemonTypeValue.WATER,
+            category = MoveCategory.STATUS,
+            power = 0,
+            accuracy = 100,
+            effect = MoveEffect.SET_WEATHER(Weather.RAIN)
+        )
+        ```
+      render: kotlin
+    validations:
+      required: false
 
   - type: textarea
     id: alternatives
     attributes:
       label: Alternatives Considered
       description: What other approaches have you tried or considered?
-      placeholder: Export CSV and filter in a spreadsheet
+      placeholder: Could implement weather as a status condition on the battlefield rather than a separate concept
     validations:
       required: false
 
@@ -49,7 +117,9 @@ body:
     id: additional
     attributes:
       label: Additional Context
-      description: Mockups, screenshots, or related links
-      placeholder: Link to Figma design or screenshots
+      description: Any other context, references to Pokémon game mechanics, or links
+      placeholder: |
+        - Reference to official game mechanics: [Bulbapedia - Weather](https://bulbapedia.bulbagarden.net/wiki/Weather)
+        - This would be similar to how weather works in Gen 6+ games
     validations:
       required: false

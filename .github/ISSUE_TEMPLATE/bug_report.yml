@@ -1,5 +1,5 @@
 name: 🐛 Bug report
-description: Use this template to report a bug or unintended behavior
+description: Use this template to report a bug or unintended behavior in PokéSim
 title: 'Bug: '
 labels: ['bug']
 assignees: []
@@ -8,13 +8,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for taking the time to report a bug! Please fill out the following details to help us reproduce and fix it as quickly as possible.
+        Thank you for taking the time to report a bug in PokéSim! Please fill out the following details to help us reproduce and fix it as quickly as possible.
 
   - type: input
     id: description
     attributes:
       label: Description (What happened?)
-      placeholder: Briefly describe the bug you encountered
+      placeholder: Briefly describe the bug you encountered in the Pokémon battle simulator
     validations:
       required: true
 
@@ -24,9 +24,10 @@ body:
       label: Reproduction Steps
       description: List the steps to reproduce the issue
       placeholder: |
-        1. Clone the repo  
-        2. Run `npm install`  
-        3. Execute `npm start` and observe the error
+        1. Create Pokémon with specific configuration (provide details)
+        2. Set up battle with these Pokémon
+        3. Execute specific actions (e.g., use move X)
+        4. Observe the error
     validations:
       required: true
 
@@ -34,7 +35,7 @@ body:
     id: expected
     attributes:
       label: Expected Behavior
-      placeholder: Describe what you expected to happen
+      placeholder: Describe what you expected to happen (e.g., move should deal X damage)
     validations:
       required: true
 
@@ -42,7 +43,39 @@ body:
     id: actual
     attributes:
       label: Actual Behavior
-      placeholder: Describe what actually happened (error messages, screenshots, etc.)
+      placeholder: Describe what actually happened (error messages, incorrect damage calculation, etc.)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Affected Module
+      description: Which module of PokéSim is affected?
+      options:
+        - Core (battle mechanics)
+        - CLI (command-line interface)
+        - PokeAPI (data fetching)
+        - Multiple modules
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature
+    attributes:
+      label: Affected Feature
+      description: Which feature is affected?
+      options:
+        - Pokémon creation/configuration
+        - Battle mechanics
+        - Damage calculation
+        - Type effectiveness
+        - Abilities
+        - Moves
+        - Status conditions
+        - Event system
+        - Other (please specify in description)
     validations:
       required: true
 
@@ -50,11 +83,36 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: OS, browser, library versions, hardware, etc.
+      description: Your development environment
       placeholder: |
-        - OS: macOS Catalina 10.15.7  
-        - Browser: Chrome 90.0.4430.85  
-        - Node.js: v14.17.3
+        - OS: macOS Ventura 13.5
+        - JDK: 20.0.1
+        - Kotlin: 2.1.20
+        - Gradle: 8.4
+    validations:
+      required: false
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Code Sample
+      description: If applicable, provide a minimal code sample that reproduces the issue
+      placeholder: |
+        ```kotlin
+        // Create a Pokémon
+        val factory = PokemonFactory()
+        val pokemon1 = factory.getPokemon(25) // Pikachu
+        val pokemon2 = factory.getPokemon(4)  // Charmander
+
+        // Create a battle service
+        val battleService = BattleService(pokemon1, pokemon2)
+
+        // Execute a turn with user inputs
+        val side1Input = UserEventMoveSelect(0)
+        val side2Input = UserEventMoveSelect(0)
+        val result = battleService.executeTurn(side1Input, side2Input)
+        ```
+      render: kotlin
     validations:
       required: false
 

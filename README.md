@@ -48,7 +48,16 @@ Contributions are welcome! Here’s how you can help:
 5.	Open a pull request
 
 Please make sure to include tests for any changes and follow Kotlin idiomatic style.
-For major changes, feel free to open an issue first to discuss the idea.
+
+### Reporting Issues
+
+If you encounter a bug, have a feature request, or want to suggest documentation improvements, please use our issue templates:
+
+- 🐛 [Report a Bug](https://github.com/sasakirione/PokeSim/issues/new?template=bug_report.yml)
+- ✨ [Request a Feature](https://github.com/sasakirione/PokeSim/issues/new?template=feature_request.yml)
+- 📚 [Suggest Documentation Improvements](https://github.com/sasakirione/PokeSim/issues/new?template=documentation_improvement.yml)
+
+For questions and discussions, please use the [Discussions](https://github.com/sasakirione/PokeSim/discussions) section instead.
 
 
 ## 📄 License
