@@ -24,7 +24,7 @@ dependencies {
 
     // Kotlinx serialization for JSON parsing
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
-    testImplementation("org.testng:testng:6.9.6")
+    testImplementation("org.testng:testng:7.7.0")
 }
 
 tasks.test {
