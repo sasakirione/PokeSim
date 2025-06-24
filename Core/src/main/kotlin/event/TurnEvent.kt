@@ -167,7 +167,10 @@ sealed class Turn() {
 
             // Calculate damage
             val damageInput = DamageEventInput(attackerAction.move, attackerAction.attackIndex)
-            val result = defender.party.pokemon.calculateDamage(damageInput)
+            val (newPokemon, result) = defender.party.pokemon.calculateDamage(damageInput)
+
+            // Update the defender's Pokemon with the new state
+            defender.party.updateCurrentPokemon(newPokemon)
 
             // Apply action results
             attacker.party.applyAction(UserEventResult(result.eventList))

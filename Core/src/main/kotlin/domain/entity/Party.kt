@@ -1,8 +1,6 @@
 package domain.entity
 
-import event.ActionEvent
-import event.UserEvent
-import event.UserEventResult
+import event.*
 import service.BattleLogger
 import type.User1stActionFunc
 
@@ -14,11 +12,13 @@ import type.User1stActionFunc
  * @param name The name of the player controlling the party. Defaults to "Player 1".
  */
 class Party(
-    val pokemons: List<Pokemon>,
+    pokemons: List<ImmutablePokemon>,
     private val logger: BattleLogger,
     val name: String = "Player 1",
     val action1st: User1stActionFunc
 ) {
+    private val _pokemons = pokemons.toMutableList()
+    val pokemons: List<ImmutablePokemon> get() = _pokemons
     /**
      * Represents the current position of a Pokémon in the party.
      *
@@ -44,7 +44,7 @@ class Party(
      * @see Party.pokemons
      * @see Party.pokemonIndex
      */
-    val pokemon: Pokemon get() = pokemons[pokemonIndex]
+    val pokemon: ImmutablePokemon get() = _pokemons[pokemonIndex]
 
     /**
      * Gets the total number of Pokémon in the party.
@@ -131,15 +131,34 @@ class Party(
     /**
      * Applies the result of a user action to the active Pokémon in the party.
      *
-     * This method delegates the application of the provided `UserEventResult`
-     * to the `applyAction` method of the active Pokémon in the party, processing
-     * any events or effects resulting from the user action.
+     * This method processes the provided `UserEventResult` and applies
+     * any events or effects to the active Pokémon, updating the Pokemon
+     * instance in the party with the new state.
      *
      * @param actionResult The result of the user action, containing a list of events
      *                     to be processed by the active Pokémon.
      */
     fun applyAction(actionResult: UserEventResult) {
-        pokemon.applyAction(actionResult)
+        var updatedPokemon = pokemon
+        actionResult.afterEventList.forEach { event ->
+            when (event) {
+                is TypeEvent -> updatedPokemon = updatedPokemon.applyTypeEvent(event)
+                is StatusEvent -> updatedPokemon = updatedPokemon.applyStatusEvent(event)
+            }
+        }
+        _pokemons[pokemonIndex] = updatedPokemon
+    }
+
+    /**
+     * Updates the current active Pokémon in the party with a new state.
+     *
+     * This method replaces the currently active Pokémon with the provided
+     * updated Pokémon instance, maintaining the same position in the party.
+     *
+     * @param updatedPokemon The new Pokémon state to replace the current active Pokémon
+     */
+    fun updateCurrentPokemon(updatedPokemon: ImmutablePokemon) {
+        _pokemons[pokemonIndex] = updatedPokemon
     }
 
     /**

@@ -1,10 +1,6 @@
 package domain.value
 
-import domain.entity.Pokemon
-import domain.interfaces.PokemonHp
-import domain.interfaces.PokemonMove
-import domain.interfaces.PokemonStatus
-import domain.interfaces.PokemonType
+import domain.entity.ImmutablePokemon
 import event.DamageEventInput
 import event.DamageEventResult
 import org.junit.jupiter.api.Test
@@ -14,48 +10,44 @@ import kotlin.test.assertTrue
 class ItemTest {
 
     // Helper function to create a test Pokemon with a specific held item
-    private fun createTestPokemon(heldItem: Item = NoItem): Pokemon {
-        val type = object : PokemonType {
-            override val originalTypes: List<PokemonTypeValue> = listOf(PokemonTypeValue.NORMAL)
-            override var tempTypes: List<PokemonTypeValue> = listOf(PokemonTypeValue.NORMAL)
-            override fun getTypeMatch(type: PokemonTypeValue): Double = 1.0
-            override fun getMoveMagnification(type: PokemonTypeValue): Double = 1.0
-            override fun execEvent(event: event.TypeEvent) {}
-            override fun execReturn() {}
-        }
+    private fun createTestPokemon(heldItem: Item = NoItem): ImmutablePokemon {
+        // Create immutable state objects
+        val typeState = domain.entity.PokemonTypeState(
+            originalTypes = listOf(PokemonTypeValue.NORMAL)
+        )
 
-        val status = object : PokemonStatus {
-            override fun getRealH(isDirect: Boolean): Int = 100
-            override fun getRealA(isDirect: Boolean): Int = 100
-            override fun getRealB(isDirect: Boolean): Int = 100
-            override fun getRealC(isDirect: Boolean): Int = 100
-            override fun getRealD(isDirect: Boolean): Int = 100
-            override fun getRealS(isDirect: Boolean): Int = 100
-            override fun moveAttack(moveCategory: MoveCategory): Int = 100
-            override fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int = 50
-            override fun execEvent(statusEvent: event.StatusEvent) {}
-            override fun execReturn() {}
-        }
+        val statusState = domain.entity.PokemonStatusState(
+            baseStats = domain.entity.PokemonStatusBase(h = 100u, a = 100u, b = 100u, c = 100u, d = 100u, s = 100u),
+            ivs = domain.entity.PokemonFigureIvV3(
+                h = IvV2(31), a = IvV2(31), b = IvV2(31),
+                c = IvV2(31), d = IvV2(31), s = IvV2(31)
+            ),
+            evs = domain.entity.PokemonStatusEvV3(
+                h = EvV2(0), a = EvV2(0), b = EvV2(0),
+                c = EvV2(0), d = EvV2(0), s = EvV2(0)
+            ),
+            nature = Nature.HARDY
+        )
 
-        val hp = object : PokemonHp {
-            override val maxHp: UInt
-                get() = 100u
-            override var currentHp: UInt = 100u
-            override fun takeDamage(damage: UInt) {
-                currentHp -= damage
-            }
+        val hpState = domain.entity.PokemonHpState(
+            maxHp = 100u,
+            currentHp = 100u
+        )
 
-            override fun isDead(): Boolean = currentHp <= 0u
-        }
+        val moves = listOf(
+            Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
+        )
+        val pokemonMove = domain.entity.PokemonMoveV3(moves)
 
-        val move = object : PokemonMove {
-            override fun getMove(index: Int): Move =
-                Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-
-            override fun getTextOfList(): String = "Test Move"
-        }
-
-        return Pokemon("Test Pokemon", type, status, hp, move, 50, heldItem)
+        return ImmutablePokemon(
+            name = "Test Pokemon",
+            typeState = typeState,
+            statusState = statusState,
+            hpState = hpState,
+            pokemonMove = pokemonMove,
+            level = 50,
+            heldItem = heldItem
+        )
     }
 
     @Test

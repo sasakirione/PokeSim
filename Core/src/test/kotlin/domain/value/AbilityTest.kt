@@ -1,13 +1,6 @@
 package domain.value
 
-import domain.entity.Pokemon
-import domain.entity.PokemonHpV1
-import domain.entity.PokemonMoveV3
-import domain.entity.PokemonStatusV3
-import domain.entity.PokemonTypeV3
-import domain.entity.PokemonFigureIvV3
-import domain.entity.PokemonStatusBase
-import domain.entity.PokemonStatusEvV3
+import domain.entity.*
 import event.DamageEventInput
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -88,47 +81,43 @@ class AbilityTest {
     }
 
     // Helper method to create a test Pokemon
-    private fun createTestPokemon(ability: Ability = NoAbility): Pokemon {
-        val type = PokemonTypeV3(
-            originalTypes = listOf(PokemonTypeValue.NORMAL),
-            terastalTypes = PokemonTypeValue.NORMAL
+    private fun createTestPokemon(ability: Ability = NoAbility): ImmutablePokemon {
+        // Create immutable state objects
+        val typeState = PokemonTypeState(
+            originalTypes = listOf(PokemonTypeValue.NORMAL)
         )
 
-        val ev = PokemonStatusEvV3(
-            h = EvV2(0),
-            a = EvV2(0),
-            b = EvV2(0),
-            c = EvV2(0),
-            d = EvV2(0),
-            s = EvV2(0)
+        val statusState = PokemonStatusState(
+            baseStats = PokemonStatusBase(h = 100u, a = 100u, b = 100u, c = 100u, d = 100u, s = 100u),
+            ivs = PokemonFigureIvV3(
+                h = IvV2(31), a = IvV2(31), b = IvV2(31),
+                c = IvV2(31), d = IvV2(31), s = IvV2(31)
+            ),
+            evs = PokemonStatusEvV3(
+                h = EvV2(0), a = EvV2(0), b = EvV2(0),
+                c = EvV2(0), d = EvV2(0), s = EvV2(0)
+            ),
+            nature = Nature.HARDY
         )
 
-        val iv = PokemonFigureIvV3(
-            h = IvV2(31),
-            a = IvV2(31),
-            b = IvV2(31),
-            c = IvV2(31),
-            d = IvV2(31),
-            s = IvV2(31)
+        val hpState = PokemonHpState(
+            maxHp = 100u,
+            currentHp = 100u
         )
-
-        val base = PokemonStatusBase(
-            h = 100u,
-            a = 100u,
-            b = 100u,
-            c = 100u,
-            d = 100u,
-            s = 100u
-        )
-
-        val status = PokemonStatusV3(ev, iv, base, nature = Nature.HARDY)
-        val hp = PokemonHpV1(100u)
 
         val moves = listOf(
             Move("Tackle", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 40, 100, 0)
         )
         val pokemonMoves = PokemonMoveV3(moves)
 
-        return Pokemon("Test Pokemon", type, status, hp, pokemonMoves, 50, ability = ability)
+        return ImmutablePokemon(
+            name = "Test Pokemon",
+            typeState = typeState,
+            statusState = statusState,
+            hpState = hpState,
+            pokemonMove = pokemonMoves,
+            level = 50,
+            ability = ability
+        )
     }
 }

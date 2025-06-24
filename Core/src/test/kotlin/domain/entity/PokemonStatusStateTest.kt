@@ -2,7 +2,8 @@ package domain.entity
 
 import domain.value.*
 import domain.value.MoveCategory.*
-import domain.value.StatusType.*
+import domain.value.StatusType.A
+import domain.value.StatusType.B
 import event.DamageEventInput
 import event.StatusEvent
 import org.junit.jupiter.api.Test

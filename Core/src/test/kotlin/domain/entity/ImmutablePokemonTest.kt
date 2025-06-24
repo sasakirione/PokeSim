@@ -1,7 +1,7 @@
 package domain.entity
 
 import domain.value.*
-import event.*
+import event.StatusEvent
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

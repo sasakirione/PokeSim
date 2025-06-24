@@ -1,21 +1,14 @@
 package domain.value
 
-import domain.entity.Pokemon
-import domain.interfaces.PokemonHp
-import domain.interfaces.PokemonMove
-import domain.interfaces.PokemonStatus
-import domain.interfaces.PokemonType
-import event.DamageEventInput
-import event.StatusEvent
-import event.TypeEvent
-import org.junit.jupiter.api.Assertions.*
+import domain.entity.ImmutablePokemon
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class PriorityCalculatorTest {
 
-    private lateinit var fastPokemon: Pokemon
-    private lateinit var slowPokemon: Pokemon
+    private lateinit var fastPokemon: ImmutablePokemon
+    private lateinit var slowPokemon: ImmutablePokemon
     private lateinit var quickAttack: Move
     private lateinit var tackle: Move
     private lateinit var roar: Move
@@ -32,13 +25,41 @@ class PriorityCalculatorTest {
         slowPokemon = createTestPokemon("SlowPokemon", 50)
     }
 
-    private fun createTestPokemon(name: String, speed: Int): Pokemon {
-        return Pokemon(
+    private fun createTestPokemon(name: String, speed: Int): ImmutablePokemon {
+        // Create immutable state objects
+        val typeState = domain.entity.PokemonTypeState(
+            originalTypes = listOf(PokemonTypeValue.NORMAL)
+        )
+
+        val statusState = domain.entity.PokemonStatusState(
+            baseStats = domain.entity.PokemonStatusBase(h = 100u, a = 80u, b = 70u, c = 90u, d = 85u, s = speed.toUInt()),
+            ivs = domain.entity.PokemonFigureIvV3(
+                h = IvV2(31), a = IvV2(31), b = IvV2(31),
+                c = IvV2(31), d = IvV2(31), s = IvV2(31)
+            ),
+            evs = domain.entity.PokemonStatusEvV3(
+                h = EvV2(0), a = EvV2(0), b = EvV2(0),
+                c = EvV2(0), d = EvV2(0), s = EvV2(0)
+            ),
+            nature = Nature.HARDY
+        )
+
+        val hpState = domain.entity.PokemonHpState(
+            maxHp = statusState.getRealH().toUInt(),
+            currentHp = statusState.getRealH().toUInt()
+        )
+
+        val moves = listOf(
+            Move("Tackle", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 40, 100, 0)
+        )
+        val pokemonMove = domain.entity.PokemonMoveV3(moves)
+
+        return ImmutablePokemon(
             name = name,
-            type = TestPokemonType(),
-            status = TestPokemonStatus(speed),
-            hp = TestPokemonHp(),
-            pokemonMove = TestPokemonMove(),
+            typeState = typeState,
+            statusState = statusState,
+            hpState = hpState,
+            pokemonMove = pokemonMove,
             level = 50
         )
     }
@@ -185,50 +206,4 @@ class PriorityCalculatorTest {
         assertEquals(slowPokemon, result[0].pokemon)
     }
 
-    // Test helper classes
-    private class TestPokemonType : PokemonType {
-        override val originalTypes: List<PokemonTypeValue> = listOf(PokemonTypeValue.NORMAL)
-        override var tempTypes: List<PokemonTypeValue> = listOf(PokemonTypeValue.NORMAL)
-
-        override fun getTypeMatch(type: PokemonTypeValue) = 1.0
-        override fun getMoveMagnification(type: PokemonTypeValue): Double = 1.0
-        override fun execEvent(typeEvent: TypeEvent) {}
-        override fun execReturn() {}
-    }
-
-    private class TestPokemonStatus(private val speed: Int = 100) : PokemonStatus {
-        private val baseValue: Int = 100
-
-        override fun getRealH(isDirect: Boolean): Int = baseValue
-        override fun getRealA(isDirect: Boolean): Int = baseValue
-        override fun getRealB(isDirect: Boolean): Int = baseValue
-        override fun getRealC(isDirect: Boolean): Int = baseValue
-        override fun getRealD(isDirect: Boolean): Int = baseValue
-        override fun getRealS(isDirect: Boolean): Int = speed
-
-        override fun moveAttack(moveCategory: MoveCategory): Int = 50
-        override fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int = 10
-        override fun execEvent(statusEvent: StatusEvent) {}
-        override fun execReturn() {}
-    }
-
-    private class TestPokemonHp : PokemonHp {
-        override val maxHp: UInt = 100u
-        override var currentHp: UInt = maxHp
-
-        override fun takeDamage(damage: UInt) {
-            currentHp = if (damage >= currentHp) 0u else currentHp - damage
-        }
-
-        override fun isDead(): Boolean = currentHp == 0u
-    }
-
-    private class TestPokemonMove : PokemonMove {
-        private val moves = listOf(
-            Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-        )
-
-        override fun getMove(index: Int): Move = moves[index]
-        override fun getTextOfList(): String = "Test Move"
-    }
 }

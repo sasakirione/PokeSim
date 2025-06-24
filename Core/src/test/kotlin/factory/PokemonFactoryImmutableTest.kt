@@ -1,7 +1,6 @@
 package factory
 
-import domain.entity.ImmutablePokemon
-import domain.value.*
+import domain.value.PokemonTypeValue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

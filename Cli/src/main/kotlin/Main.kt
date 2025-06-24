@@ -15,8 +15,8 @@ class SingleBattleG9 : SuspendingCliktCommand() {
 
         // Create different Pokémon for each side
         val pokemonFactory = PokemonFactory()
-        val pokemon1 = pokemonFactory.getPokemon(1)
-        val pokemon2 = pokemonFactory.getPokemon(2)
+        val pokemon1 = pokemonFactory.getImmutablePokemon(1)
+        val pokemon2 = pokemonFactory.getImmutablePokemon(2)
 
         echo("Player 1's Pokémon: ${pokemon1.name}")
         echo("Player 2's Pokémon: ${pokemon2.name}")

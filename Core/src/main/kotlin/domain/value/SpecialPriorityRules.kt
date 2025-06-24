@@ -1,6 +1,6 @@
 package domain.value
 
-import domain.entity.Pokemon
+import domain.entity.ImmutablePokemon
 
 /**
  * Handles special priority rules and edge cases for different game generations.
@@ -8,7 +8,7 @@ import domain.entity.Pokemon
  * @param generation The game generation (affects priority rules)
  */
 class SpecialPriorityRules(private val generation: Int) {
-    
+
     /**
      * Handles priority changes due to Mega Evolution.
      * 
@@ -21,7 +21,7 @@ class SpecialPriorityRules(private val generation: Int) {
      * @return The effective priority to use for turn order
      */
     fun handleMegaEvolutionPriority(
-        pokemon: Pokemon,
+        pokemon: ImmutablePokemon,
         originalPriority: Int,
         newPriority: Int
     ): Int {
@@ -30,7 +30,7 @@ class SpecialPriorityRules(private val generation: Int) {
             else -> newPriority    // Generation 7+: Use post-Mega ability
         }
     }
-    
+
     /**
      * Handles Encore effect on move priority.
      * 
@@ -50,7 +50,7 @@ class SpecialPriorityRules(private val generation: Int) {
         // Encore retains the priority of the originally selected move
         return PriorityEffect.Encore(selectedPriority)
     }
-    
+
     /**
      * Handles priority for moves that call other moves (e.g., Sleep Talk, Metronome).
      * 
@@ -67,7 +67,7 @@ class SpecialPriorityRules(private val generation: Int) {
         // Always use the calling move's priority
         return callingMove.priority
     }
-    
+
     /**
      * Handles special timing moves that have unique priority behaviors.
      *
@@ -82,7 +82,7 @@ class SpecialPriorityRules(private val generation: Int) {
             else -> null
         }
     }
-    
+
     /**
      * Handles priority for fleeing wild Pokémon (Generation 2 specific).
      * 
@@ -93,7 +93,7 @@ class SpecialPriorityRules(private val generation: Int) {
      * @return The priority for the flee action
      */
     fun handleWildPokemonFleePriority(
-        pokemon: Pokemon,
+        pokemon: ImmutablePokemon,
         selectedMove: Move?
     ): Int {
         return if (generation == 2 && selectedMove != null) {
@@ -102,7 +102,7 @@ class SpecialPriorityRules(private val generation: Int) {
             -7  // BDSP roaming Pokémon flee at priority -7
         }
     }
-    
+
     /**
      * Checks if a move should fail but still apply priority changes.
      * 
@@ -122,7 +122,7 @@ class SpecialPriorityRules(private val generation: Int) {
             else -> false
         }
     }
-    
+
     /**
      * Handles priority for preparation moves that act at the start of turn.
      * 

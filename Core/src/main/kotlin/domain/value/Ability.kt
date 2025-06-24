@@ -1,5 +1,6 @@
 package domain.value
 
+import domain.entity.ImmutablePokemon
 import domain.entity.Pokemon
 import event.DamageEventInput
 import event.DamageEventResult
@@ -66,6 +67,57 @@ sealed interface Ability {
      * @return The modified stat value
      */
     fun modifyStat(pokemon: Pokemon, statType: StatType, value: Int): Int = value
+
+    /**
+     * Applies the ability's effect when calculating outgoing damage (ImmutablePokemon version).
+     *
+     * @param pokemon The ImmutablePokemon with this ability
+     * @param damageEventInput The input parameters for damage calculation
+     * @return The modified damage event input
+     */
+    fun modifyOutgoingDamage(pokemon: ImmutablePokemon, damageEventInput: DamageEventInput): DamageEventInput = damageEventInput
+
+    /**
+     * Applies the ability's effect when calculating incoming damage (ImmutablePokemon version).
+     *
+     * @param pokemon The ImmutablePokemon with this ability
+     * @param damageEventInput The input parameters for damage calculation
+     * @return The modified damage event input
+     */
+    fun modifyIncomingDamage(pokemon: ImmutablePokemon, damageEventInput: DamageEventInput): DamageEventInput = damageEventInput
+
+    /**
+     * Applies the ability's effect after damage calculation (ImmutablePokemon version).
+     *
+     * @param pokemon The ImmutablePokemon with this ability
+     * @param damageEventResult The result of damage calculation
+     * @return The modified damage event result
+     */
+    fun afterDamage(pokemon: ImmutablePokemon, damageEventResult: DamageEventResult): DamageEventResult = damageEventResult
+
+    /**
+     * Applies the ability's effect at the start of a turn (ImmutablePokemon version).
+     *
+     * @param pokemon The ImmutablePokemon with this ability
+     */
+    fun onTurnStart(pokemon: ImmutablePokemon) {}
+
+    /**
+     * Applies the ability's effect at the end of a turn (ImmutablePokemon version).
+     *
+     * @param pokemon The ImmutablePokemon with this ability
+     */
+    fun onTurnEnd(pokemon: ImmutablePokemon) {}
+
+    /**
+     * Modifies the Pokémon's stats (ImmutablePokemon version).
+     *
+     * @param pokemon The ImmutablePokemon with this ability
+     * @param statType The type of stat to modify
+     * @param value The current value of the stat
+     * @return The modified stat value
+     */
+    fun modifyStat(pokemon: ImmutablePokemon, statType: StatType, value: Int): Int = value
 }
 
 /**

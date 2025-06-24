@@ -117,9 +117,10 @@ data class ImmutablePokemon(
      */
     fun getFinalSpeed(): Int {
         val baseSpeed = statusState.getRealS()
-        // TODO: Apply held item and ability effects when interfaces are updated for ImmutablePokemon
-        // For now, return base speed
-        return baseSpeed
+        // Apply held item effects to speed stat
+        val itemModifiedSpeed = heldItem.modifyStat(this, StatType.SPEED, baseSpeed)
+        // Apply ability effects to speed stat
+        return ability.modifyStat(this, StatType.SPEED, itemModifiedSpeed)
     }
 
     /**
@@ -197,10 +198,13 @@ data class ImmutablePokemon(
                 val attackIndex = fiveOutOverFiveIn(damage2 * typeState.getMoveMagnification(move.type))
 
                 // Create damage event input
-                val damageEventInput = DamageEventInput(move, attackIndex)
+                var damageEventInput = DamageEventInput(move, attackIndex)
 
-                // TODO: Apply held item and ability effects when interfaces are updated for ImmutablePokemon
-                // For now, use the base damage event input
+                // Apply held item effects to outgoing damage
+                damageEventInput = heldItem.modifyOutgoingDamage(this, damageEventInput)
+
+                // Apply ability effects to outgoing damage
+                damageEventInput = ability.modifyOutgoingDamage(this, damageEventInput)
 
                 return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, damageEventInput.attackIndex)
             }
@@ -240,18 +244,16 @@ data class ImmutablePokemon(
      * Executes the item and ability effects associated with the Pokemon at the start of its turn.
      */
     fun onTurnStart() {
-        // TODO: Apply held item and ability effects when interfaces are updated for ImmutablePokemon
-        // heldItem.onTurnStart(this)
-        // ability.onTurnStart(this)
+        heldItem.onTurnStart(this)
+        ability.onTurnStart(this)
     }
 
     /**
      * Executes the item and ability effects associated with the Pokemon at the end of its turn.
      */
     fun onTurnEnd() {
-        // TODO: Apply held item and ability effects when interfaces are updated for ImmutablePokemon
-        // heldItem.onTurnEnd(this)
-        // ability.onTurnEnd(this)
+        heldItem.onTurnEnd(this)
+        ability.onTurnEnd(this)
     }
 
     /**
