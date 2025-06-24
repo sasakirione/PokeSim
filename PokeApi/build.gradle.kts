@@ -3,29 +3,15 @@ plugins {
     kotlin("plugin.serialization") version "2.1.21"
 }
 
-group = "com.sasakirione"
-version = "unspecified"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":Core"))
-    testImplementation(kotlin("test"))
+    testImplementation(libs.kotlin.test)
     // Ktor client for HTTP requests
-    implementation("io.ktor:ktor-client-core:3.2.0")
-    implementation("io.ktor:ktor-client-cio:3.2.0")
-    implementation("io.ktor:ktor-client-content-negotiation:3.2.0")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.0")
-
+    implementation(libs.bundles.ktor.client)
     // Kotlinx serialization for JSON parsing
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation(libs.kotlinx.serialization.json)
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
 kotlin {
     jvmToolchain(20)
 }
