@@ -2,6 +2,9 @@ package event
 
 import domain.entity.Field
 import domain.entity.Party
+import domain.value.BattleAction
+import domain.value.PriorityCalculator
+import domain.value.PriorityContext
 
 /**
  * Represents a game turn flow, implemented as a sealed class. Different phases or steps of the game
@@ -34,7 +37,7 @@ sealed class Turn() {
      * @param party1 The first party participating in the turn.
      * @param party2 The second party participating in the turn.
      */
-    class TurnStart(private val party1: Party, private val party2: Party, private val field: Field) : Turn() {
+    class TurnStart(private val party1: Party, private val party2: Party, private val field: Field, private val generation: Int = 8) : Turn() {
 
         /**
          * Processes the asynchronous actions of both parties for the current turn.
@@ -60,7 +63,7 @@ sealed class Turn() {
                 party1.logWin()
                 return TurnEnd(party1, party2, true, field)
             }
-            return TurnStep1(party1, party2, input1, input2, field)
+            return TurnStep1(party1, party2, input1, input2, field, generation)
         }
     }
 
@@ -81,6 +84,7 @@ sealed class Turn() {
         private val userEvent1: UserEvent,
         private val userEvent2: UserEvent,
         private val field: Field,
+        private val generation: Int = 8
     ) : Turn() {
         override fun process(): Turn {
             party1.onTurnStart()
@@ -93,33 +97,54 @@ sealed class Turn() {
             party1.handlePokemonChangeAction(side1Action)
             party2.handlePokemonChangeAction(side2Action)
 
-            val isPlayer1Faster = determineTurnOrder()
+            // Create battle actions for priority calculation
+            val battleActions: List<BattleAction> = listOf(
+                createBattleAction(party1, side1Action),
+                createBattleAction(party2, side2Action)
+            )
 
-            val player1 = TurnAction(party1, side1Action)
-            val player2 = TurnAction(party2, side2Action)
+            // Use priority system to determine turn order
+            val priorityCalculator = PriorityCalculator(generation)
+            val priorityContext = createPriorityContext()
+            val orderedActions = priorityCalculator.determineTurnOrder(battleActions, priorityContext)
 
-            return TurnMove.TurnStep1stMove(player1, player2, isPlayer1Faster, field)
-        }
+            val isPlayer1First = orderedActions.first().pokemon == party1.pokemon
 
-        /**
-         * Determines the turn order based on the speed of the Pokémon in the two parties.
-         *
-         * The turn order is calculated by comparing the final speed of the active Pokémon
-         * in both parties. If the first party's Pokémon is faster, it is logged as the
-         * first to act; otherwise, the second party's Pokémon is logged as the first.
-         *
-         * @return true if the first party's Pokémon acts first, false otherwise
-         */
-        private fun determineTurnOrder(): Boolean {
-            val isPlayer1Faster = party1.pokemon.getFinalSpeed() > party2.pokemon.getFinalSpeed()
-
-            if (isPlayer1Faster) {
+            if (isPlayer1First) {
                 party1.logFirst()
             } else {
                 party2.logFirst()
             }
-            return isPlayer1Faster
+
+            val player1 = TurnAction(party1, side1Action)
+            val player2 = TurnAction(party2, side2Action)
+
+            return TurnMove.TurnStep1stMove(player1, player2, isPlayer1First, field)
         }
+
+        /**
+         * Creates a BattleAction from a Party and ActionEvent.
+         */
+        private fun createBattleAction(party: Party, action: ActionEvent): BattleAction {
+            return when (action) {
+                is ActionEvent.ActionEventMove -> BattleAction.MoveAction(party.pokemon, action.move)
+                is ActionEvent.ActionEventPokemonChange -> BattleAction.SwitchAction(party.pokemon, action.pokemonIndex)
+            }
+        }
+
+        /**
+         * Creates a PriorityContext for the current battle state.
+         */
+        private fun createPriorityContext(): PriorityContext {
+            // For now, create a basic context. This can be enhanced later with field effects, abilities, etc.
+            return PriorityContext(
+                generation = generation,
+                turnStartPriorities = mapOf(), // Can be populated with turn start priorities
+                currentPriorities = mapOf(),   // Can be populated with current priorities
+                specialEffects = listOf()      // Can be populated with special effects
+            )
+        }
+
     }
 
     /**

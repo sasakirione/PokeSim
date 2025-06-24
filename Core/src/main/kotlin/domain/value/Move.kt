@@ -6,10 +6,9 @@ class Move(
     val category: MoveCategory,
     val power: Int,
     val accuracy: Int,
-    priority: Int
+    val priority: Int = 0
 )
 
 enum class MoveCategory {
     PHYSICAL, SPECIAL, STATUS
 }
-
