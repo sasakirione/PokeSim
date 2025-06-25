@@ -141,7 +141,7 @@ sealed class Turn() {
                 generation = generation,
                 turnStartPriorities = mapOf(), // Can be populated with turn start priorities
                 currentPriorities = mapOf(),   // Can be populated with current priorities
-                specialEffects = listOf()      // Can be populated with special effects
+                specialEffects = mapOf()       // Can be populated with special effects
             )
         }
 

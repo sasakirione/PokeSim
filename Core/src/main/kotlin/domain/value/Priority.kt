@@ -6,13 +6,13 @@ package domain.value
  * @param generation The game generation (affects priority rules)
  * @param turnStartPriorities Map of Pokémon ID to their priority at turn start
  * @param currentPriorities Map of Pokémon ID to their current priority
- * @param specialEffects List of special effects affecting priority
+ * @param specialEffects Map of Pokémon ID to their special effects affecting priority
  */
 data class PriorityContext(
     val generation: Int,
     val turnStartPriorities: Map<String, Int> = emptyMap(),
     val currentPriorities: Map<String, Int> = emptyMap(),
-    val specialEffects: List<PriorityEffect> = emptyList()
+    val specialEffects: Map<String, List<PriorityEffect>> = emptyMap()
 )
 
 /**
@@ -23,28 +23,28 @@ sealed class PriorityEffect {
      * おさきにどうぞ - Makes the target act immediately next
      */
     object OsakiniDouzo : PriorityEffect()
-    
+
     /**
      * さきおくり - Makes the target act last
      */
     object SakiOkuri : PriorityEffect()
-    
+
     /**
      * アンコール - Forces use of a specific move but retains original priority
      * @param originalPriority The priority of the originally selected move
      */
     data class Encore(val originalPriority: Int) : PriorityEffect()
-    
+
     /**
      * トラップシェル - Special timing for Trap Shell
      */
     object TrapShell : PriorityEffect()
-    
+
     /**
      * りんしょう - Round, acts immediately after another Round
      */
     object Round : PriorityEffect()
-    
+
     /**
      * さいはい - Instruct, makes target use last move again
      */
@@ -57,7 +57,7 @@ sealed class PriorityEffect {
  * @param generation The game generation (affects priority calculation rules)
  */
 class PriorityCalculator(private val generation: Int) {
-    
+
     /**
      * Determines the turn order for a list of battle actions.
      *
@@ -74,7 +74,7 @@ class PriorityCalculator(private val generation: Int) {
             else -> determineTurnOrderGen8Plus(actions, context)
         }
     }
-    
+
     /**
      * Turn order determination for generations 1-7.
      * Priority is fixed at turn start and doesn't change mid-turn.
@@ -92,7 +92,7 @@ class PriorityCalculator(private val generation: Int) {
             }
         )
     }
-    
+
     /**
      * Turn order determination for generation 8+.
      * Priority changes can affect turn order immediately.
@@ -110,7 +110,7 @@ class PriorityCalculator(private val generation: Int) {
             }
         )
     }
-    
+
     /**
      * Gets the effective priority for an action, considering special effects.
      *
@@ -134,11 +134,12 @@ class PriorityCalculator(private val generation: Int) {
             }
             is BattleAction.SwitchAction -> 6 // Switching has priority +6
         }
-        
-        // Apply special effects
-        return applySpecialEffects(basePriority, context.specialEffects)
+
+        // Apply special effects for this specific Pokemon
+        val pokemonEffects = context.specialEffects[action.pokemon.name] ?: emptyList()
+        return applySpecialEffects(basePriority, pokemonEffects)
     }
-    
+
     /**
      * Applies special effects to modify priority.
      *

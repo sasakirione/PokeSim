@@ -145,16 +145,16 @@ class PriorityCalculatorTest {
 
         val resultGen8 = calculatorGen8.determineTurnOrder(actions, contextGen8)
 
-        // In Gen 8, should use current priority (1), so fast Pokémon still goes first
+        // In Gen 8, should use the current priority (1), so fast Pokémon still goes first
         assertEquals(fastPokemon, resultGen8[0].pokemon)
     }
 
     @Test
-    fun testOsakiniDouzuEffect() {
+    fun testOsakiniDouzoEffect() {
         val calculator = PriorityCalculator(8)
         val context = PriorityContext(
             generation = 8,
-            specialEffects = listOf(PriorityEffect.OsakiniDouzo)
+            specialEffects = mapOf(slowPokemon.name to listOf(PriorityEffect.OsakiniDouzo))
         )
 
         val actions = listOf(
@@ -173,7 +173,7 @@ class PriorityCalculatorTest {
         val calculator = PriorityCalculator(8)
         val context = PriorityContext(
             generation = 8,
-            specialEffects = listOf(PriorityEffect.SakiOkuri)
+            specialEffects = mapOf(fastPokemon.name to listOf(PriorityEffect.SakiOkuri))
         )
 
         val actions = listOf(
@@ -192,7 +192,7 @@ class PriorityCalculatorTest {
         val calculator = PriorityCalculator(8)
         val context = PriorityContext(
             generation = 8,
-            specialEffects = listOf(PriorityEffect.Encore(1)) // Original move had priority +1
+            specialEffects = mapOf(slowPokemon.name to listOf(PriorityEffect.Encore(1))) // Original move had priority +1
         )
 
         val actions = listOf(
@@ -202,7 +202,7 @@ class PriorityCalculatorTest {
 
         val result = calculator.determineTurnOrder(actions, context)
 
-        // Encore should retain original priority (+1), so slow Pokémon goes first
+        // Encore should retain the original priority (+1), so slow Pokémon goes first
         assertEquals(slowPokemon, result[0].pokemon)
     }
 
