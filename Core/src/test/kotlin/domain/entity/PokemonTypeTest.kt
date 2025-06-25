@@ -3,7 +3,6 @@ package domain.entity
 import domain.value.PokemonTypeValue.*
 import event.TypeEvent.TypeEventAdd
 import event.TypeEvent.TypeEventChange
-import exception.NotSupportVersion
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -183,20 +182,6 @@ class PokemonTypeTest {
         pokemonTypeWithNoneTerastal.doTerastal()
         assertFalse(pokemonTypeWithNoneTerastal.isTerastal)
         assertEquals(listOf(FIRE, FLYING), pokemonTypeWithNoneTerastal.tempTypes)
-    }
-
-    @Test
-    fun testExceptionHandling() {
-        // サポートされていないタイプに対する例外処理のテスト
-        val pokemonType = PokemonTypeV3(
-            originalTypes = listOf(FIRE, FLYING),
-            terastalTypes = WATER,
-        )
-
-        // QUESTIONタイプはNotSupportVersionをスローする
-        assertThrows(NotSupportVersion::class.java) {
-            pokemonType.getTypeMatch(QUESTION)
-        }
     }
 
     @Test

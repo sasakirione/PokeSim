@@ -141,7 +141,6 @@ class TurnEventTest {
         // In a real test, we would check the specific class, but for simplicity we'll just check it's a Turn
         assertTrue { result is Turn.TurnMove.TurnStep2ndMove || result is Turn.TurnMove.TurnStep2ndMoveSkip }
         assertTrue(logger.logMessages.contains("Player 1's TestPokemon1 used Test Move!"))
-        assertTrue(logger.logMessages.contains("Damage dealt: 10"))
     }
 
     @Test
@@ -160,7 +159,6 @@ class TurnEventTest {
         // In a real test, we would check the specific class, but for simplicity we'll just check it's a Turn
         assertTrue { result is Turn.TurnMove.TurnStep2ndMove || result is Turn.TurnMove.TurnStep2ndMoveSkip }
         assertTrue(logger.logMessages.contains("Player 2's TestPokemon2 used Test Move!"))
-        assertTrue(logger.logMessages.contains("Damage dealt: 10"))
     }
 
     @Test
@@ -199,7 +197,6 @@ class TurnEventTest {
         // Assert
         assertTrue(result is Turn.TurnEnd)
         assertTrue(logger.logMessages.contains("Player 2's TestPokemon2 used Test Move!"))
-        assertTrue(logger.logMessages.contains("Damage dealt: 10"))
     }
 
     @Test

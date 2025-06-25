@@ -19,10 +19,13 @@ class DamageCalculationTest {
             randomFactor = 1.0, // No random factor for testing
             otherModifiers = 1.0
         )
-        
+
         // Expected: ((((2 * 50 / 5 + 2) * 80 * 150 / 100) / 50) + 2) * 1.5 * 2.0 * 1.0 * 1.0
-        // = ((22 * 80 * 150 / 100) / 50 + 2) * 3.0 = (264 / 50 + 2) * 3.0 = 7.28 * 3.0 = 21.84 ≈ 22
-        assertTrue(result >= 20 && result <= 25) // Allow some variance due to rounding
+        // = ((((20 + 2) * 80 * 150 / 100) / 50) + 2) * 3.0 
+        // = (((22 * 80 * 1.5) / 50) + 2) * 3.0 
+        // = ((2640 / 50) + 2) * 3.0 
+        // = (52.8 + 2) * 3.0 = 54.8 * 3.0 = 164.4 ≈ 164
+        assertEquals(164, result) // Corrected expected damage value
     }
 
     @Test
@@ -37,13 +40,13 @@ class DamageCalculationTest {
             randomFactor = 1.0,
             otherModifiers = 1.0
         )
-        
+
         assertEquals(0, result)
     }
 
     @Test
     fun `calculateDamage should return at least 1 damage`() {
-        // Test with very low attack and high defense
+        // Test with very low attack and high defence
         val result = DamageCalculation.calculateDamage(
             attackStat = 1,
             defenseStat = 999,
@@ -54,7 +57,7 @@ class DamageCalculationTest {
             randomFactor = 0.85, // Minimum random factor
             otherModifiers = 1.0
         )
-        
+
         assertTrue(result >= 1) // Should always deal at least 1 damage
     }
 
@@ -75,7 +78,7 @@ class DamageCalculationTest {
             isTerastal = false,
             terastalType = null
         )
-        
+
         assertEquals(1.5, result, 0.01)
     }
 
@@ -87,7 +90,7 @@ class DamageCalculationTest {
             isTerastal = false,
             terastalType = null
         )
-        
+
         assertEquals(1.0, result, 0.01)
     }
 
@@ -99,7 +102,7 @@ class DamageCalculationTest {
             isTerastal = true,
             terastalType = PokemonTypeValue.FIRE
         )
-        
+
         assertEquals(2.0, result, 0.01)
     }
 
@@ -111,7 +114,7 @@ class DamageCalculationTest {
             isTerastal = true,
             terastalType = PokemonTypeValue.WATER
         )
-        
+
         assertEquals(1.5, result, 0.01)
     }
 
@@ -127,7 +130,7 @@ class DamageCalculationTest {
             randomFactor = 1.0,
             otherModifiers = 1.0
         )
-        
+
         // Should be significantly higher than level 50 calculation
         assertTrue(result > 50)
     }
@@ -144,7 +147,7 @@ class DamageCalculationTest {
             randomFactor = 1.0,
             otherModifiers = 1.0
         )
-        
+
         assertEquals(0, result)
     }
 }

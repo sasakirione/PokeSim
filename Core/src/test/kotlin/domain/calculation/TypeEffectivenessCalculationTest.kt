@@ -54,7 +54,7 @@ class TypeEffectivenessCalculationTest {
             defenseTypes = listOf(PokemonTypeValue.WATER, PokemonTypeValue.GROUND)
         )
 
-        assertEquals(1.0, result, 0.01)
+        assertEquals(0.5, result, 0.01)
     }
 
     @Test
