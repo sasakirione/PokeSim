@@ -3,6 +3,8 @@ package domain.entity
 import domain.interfaces.PokemonType
 import domain.value.PokemonTypeValue
 import domain.value.PokemonTypeValue.*
+import domain.calculation.TypeEffectivenessCalculation
+import domain.calculation.DamageCalculation
 import event.TypeEvent
 import event.TypeEvent.*
 import exception.NotSupportVersion
@@ -31,12 +33,14 @@ class PokemonTypeV3(
 ) : PokemonType {
 
     override fun getTypeMatch(type: PokemonTypeValue): Double {
-        var magnification = if (tempTypes.contains(STELLAR)) {
+        val defenseTypes = if (tempTypes.contains(STELLAR)) {
             // タイプがステラの場合だけオリジナルのタイプで相性計算
-            originalTypes.fold(1.0) { part, pokeType -> part * getNormalMagnification(type, pokeType) }
+            originalTypes
         } else {
-            tempTypes.fold(1.0) { part, pokeType -> part * getNormalMagnification(type, pokeType) }
+            tempTypes
         }
+
+        var magnification = TypeEffectivenessCalculation.calculateTypeEffectiveness(type, defenseTypes)
 
         // タールショット等
         if (specialDamageType != NONE && specialDamageType == type) {
@@ -50,22 +54,13 @@ class PokemonTypeV3(
         if (type == NORMAL) {
             return 1.0
         }
-        // テラスタルじゃない場合
-        if (!isTerastal) {
-            return if (tempTypes.contains(type)) {
-                1.5
-            } else {
-                1.0
-            }
-        }
-        // テラスタルの場合　ステラの考慮なし
-        val isOriginalType = originalTypes.contains(type)
-        val isTerastalType = tempTypes.contains(type)
-        return when {
-            isOriginalType && isTerastalType -> 2.0
-            isOriginalType || isTerastalType -> 1.5
-            else -> 1.0
-        }
+
+        return DamageCalculation.calculateStab(
+            moveType = type,
+            pokemonTypes = originalTypes,
+            isTerastal = isTerastal,
+            terastalType = if (isTerastal) terastalTypes else null
+        )
     }
 
     override fun execEvent(typeEvent: TypeEvent) {
@@ -354,4 +349,3 @@ class PokemonTypeV3(
         else -> 1.0
     }
 }
-

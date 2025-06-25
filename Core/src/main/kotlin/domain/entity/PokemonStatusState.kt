@@ -4,6 +4,8 @@ import domain.value.MoveCategory
 import domain.value.MoveCategory.*
 import domain.value.Nature
 import domain.value.StatusType.*
+import domain.calculation.StatCalculation
+import domain.calculation.DamageCalculation
 import event.DamageEventInput
 import event.StatusEvent
 import kotlin.math.floor
@@ -83,7 +85,7 @@ data class PokemonStatusState(
         val res = if (isDirect) {
             realBaseA
         } else {
-            realBaseA * statusCorrections.getCorrectionA()
+            StatCalculation.applyStatModification(realBaseA, statusCorrections.a)
         }
         return res.toInt()
     }
@@ -96,7 +98,7 @@ data class PokemonStatusState(
         val res = if (isDirect) {
             realBaseB
         } else {
-            realBaseB * statusCorrections.getCorrectionB()
+            StatCalculation.applyStatModification(realBaseB, statusCorrections.b)
         }
         return res.toInt()
     }
@@ -109,7 +111,7 @@ data class PokemonStatusState(
         val res = if (isDirect) {
             realBaseC
         } else {
-            realBaseC * statusCorrections.getCorrectionC()
+            StatCalculation.applyStatModification(realBaseC, statusCorrections.c)
         }
         return res.toInt()
     }
@@ -122,7 +124,7 @@ data class PokemonStatusState(
         val res = if (isDirect) {
             realBaseD
         } else {
-            realBaseD * statusCorrections.getCorrectionD()
+            StatCalculation.applyStatModification(realBaseD, statusCorrections.d)
         }
         return res.toInt()
     }
@@ -135,7 +137,7 @@ data class PokemonStatusState(
         val res = if (isDirect) {
             realBaseS
         } else {
-            realBaseS * statusCorrections.getCorrectionS()
+            StatCalculation.applyStatModification(realBaseS, statusCorrections.s)
         }
         return res.toInt()
     }
@@ -155,20 +157,20 @@ data class PokemonStatusState(
      * Calculates damage for an incoming attack.
      */
     fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int {
-        if (input.move.category == STATUS) {
-            return 0
-        }
-
-        // Simplified damage calculation - in a real implementation this would be more complex
-        val attackStat = when (input.move.category) {
-            PHYSICAL -> getRealB() // Use defence for physical moves
-            SPECIAL -> getRealD()  // Use special defence for special moves
+        val defenseStat = when (input.move.category) {
+            PHYSICAL -> getRealB(false)
+            SPECIAL -> getRealD(false)
             STATUS -> return 0
         }
 
-        // Basic damage formula: (AttackIndex * TypeCompatibility) / Defense
-        val baseDamage = (input.attackIndex * typeCompatibility) / attackStat
-        return max(1, baseDamage.toInt()) // Minimum 1 damage
+        return DamageCalculation.calculateDamage(
+            attackStat = input.attackIndex,
+            defenseStat = defenseStat,
+            movePower = input.move.power,
+            level = level, // Use the level from the state
+            typeCompatibility = typeCompatibility,
+            randomFactor = DamageCalculation.generateRandomFactor()
+        )
     }
 
     /**

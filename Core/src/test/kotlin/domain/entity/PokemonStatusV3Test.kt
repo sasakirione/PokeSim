@@ -1,6 +1,7 @@
 package domain.entity
 
 import domain.value.*
+import domain.calculation.StatCalculation
 import event.DamageEventInput
 import event.StatusEvent
 import org.junit.jupiter.api.Assertions.*
@@ -126,27 +127,27 @@ class PokemonStatusV3Test {
 
         // Test getRealA with and without corrections
         assertEquals(status.realBaseA.toInt(), status.getRealA(true))
-        val expectedCorrectedA = status.realBaseA * status.correction.getCorrectionA()
+        val expectedCorrectedA = StatCalculation.applyStatModification(status.realBaseA, status.correction.a)
         assertEquals(expectedCorrectedA.toInt(), status.getRealA(false))
 
         // Test getRealB with and without corrections
         assertEquals(status.realBaseB.toInt(), status.getRealB(true))
-        val expectedCorrectedB = status.realBaseB * status.correction.getCorrectionB()
+        val expectedCorrectedB = StatCalculation.applyStatModification(status.realBaseB, status.correction.b)
         assertEquals(expectedCorrectedB.toInt(), status.getRealB(false))
 
         // Test getRealC with and without corrections
         assertEquals(status.realBaseC.toInt(), status.getRealC(true))
-        val expectedCorrectedC = status.realBaseC * status.correction.getCorrectionC()
+        val expectedCorrectedC = StatCalculation.applyStatModification(status.realBaseC, status.correction.c)
         assertEquals(expectedCorrectedC.toInt(), status.getRealC(false))
 
         // Test getRealD with and without corrections
         assertEquals(status.realBaseD.toInt(), status.getRealD(true))
-        val expectedCorrectedD = status.realBaseD * status.correction.getCorrectionD()
+        val expectedCorrectedD = StatCalculation.applyStatModification(status.realBaseD, status.correction.d)
         assertEquals(expectedCorrectedD.toInt(), status.getRealD(false))
 
         // Test getRealS with and without corrections
         assertEquals(status.realBaseS.toInt(), status.getRealS(true))
-        val expectedCorrectedS = status.realBaseS * status.correction.getCorrectionS()
+        val expectedCorrectedS = StatCalculation.applyStatModification(status.realBaseS, status.correction.s)
         assertEquals(expectedCorrectedS.toInt(), status.getRealS(false))
     }
 
