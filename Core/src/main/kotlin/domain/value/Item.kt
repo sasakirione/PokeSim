@@ -1,7 +1,6 @@
 package domain.value
 
 import domain.entity.ImmutablePokemon
-import domain.entity.Pokemon
 import event.DamageEventInput
 import event.DamageEventResult
 
@@ -21,57 +20,6 @@ interface Item {
      * The description of the item's effect.
      */
     val description: String
-
-    /**
-     * Applies the item's effect when calculating outgoing damage.
-     *
-     * @param pokemon The Pokémon holding the item
-     * @param damageEventInput The input parameters for damage calculation
-     * @return The modified damage event input
-     */
-    fun modifyOutgoingDamage(pokemon: Pokemon, damageEventInput: DamageEventInput): DamageEventInput = damageEventInput
-
-    /**
-     * Applies the item's effect when calculating incoming damage.
-     *
-     * @param pokemon The Pokémon holding the item
-     * @param damageEventInput The input parameters for damage calculation
-     * @return The modified damage event input
-     */
-    fun modifyIncomingDamage(pokemon: Pokemon, damageEventInput: DamageEventInput): DamageEventInput = damageEventInput
-
-    /**
-     * Applies the item's effect after damage calculation.
-     *
-     * @param pokemon The Pokémon holding the item
-     * @param damageEventResult The result of damage calculation
-     * @return The modified damage event result
-     */
-    fun afterDamage(pokemon: Pokemon, damageEventResult: DamageEventResult): DamageEventResult = damageEventResult
-
-    /**
-     * Applies the item's effect at the start of a turn.
-     *
-     * @param pokemon The Pokémon holding the item
-     */
-    fun onTurnStart(pokemon: Pokemon) {}
-
-    /**
-     * Applies the item's effect at the end of a turn.
-     *
-     * @param pokemon The Pokémon holding the item
-     */
-    fun onTurnEnd(pokemon: Pokemon) {}
-
-    /**
-     * Modifies the Pokémon's stats.
-     *
-     * @param pokemon The Pokémon holding the item
-     * @param statType The type of stat to modify
-     * @param value The current value of the stat
-     * @return The modified stat value
-     */
-    fun modifyStat(pokemon: Pokemon, statType: StatType, value: Int): Int = value
 
     /**
      * Applies the item's effect when calculating outgoing damage (ImmutablePokemon version).
@@ -153,7 +101,7 @@ class StatBoostItem(
     private val statType: StatType,
     private val boostPercentage: Int
 ) : Item {
-    override fun modifyStat(pokemon: Pokemon, statType: StatType, value: Int): Int {
+    override fun modifyStat(pokemon: ImmutablePokemon, statType: StatType, value: Int): Int {
         if (statType == this.statType) {
             return (value * (100 + boostPercentage) / 100)
         }
@@ -173,7 +121,7 @@ class TypeBoostItem(
     private val moveType: PokemonTypeValue,
     private val boostPercentage: Int
 ) : Item {
-    override fun modifyOutgoingDamage(pokemon: Pokemon, damageEventInput: DamageEventInput): DamageEventInput {
+    override fun modifyOutgoingDamage(pokemon: ImmutablePokemon, damageEventInput: DamageEventInput): DamageEventInput {
         if (damageEventInput.move.type == moveType) {
             // Create a new instance with the modified attackIndex
             return DamageEventInput(

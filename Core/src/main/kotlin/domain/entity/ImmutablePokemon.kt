@@ -5,19 +5,19 @@ import domain.value.*
 import event.*
 
 /**
- * Immutable Pokemon data class that represents a Pokemon in battle.
+ * Immutable Pokémon data class that represents a Pokémon in battle.
  * 
  * This data class follows functional programming principles where all state changes
  * result in new instances being created rather than modifying the existing instance.
  * 
- * @property name The name of the Pokemon
- * @property typeState The immutable type state of the Pokemon
- * @property statusState The immutable status/stats state of the Pokemon
- * @property hpState The immutable HP state of the Pokemon
- * @property pokemonMove The moves that the Pokemon can use
- * @property level The level of the Pokemon
- * @property heldItem The item held by the Pokemon
- * @property ability The ability of the Pokemon
+ * @property name The name of the Pokémon
+ * @property typeState The immutable type state of the Pokémon
+ * @property statusState The immutable status/stats state of the Pokémon
+ * @property hpState The immutable HP state of the Pokémon
+ * @property pokemonMove The moves that the Pokémon can use
+ * @property level The level of the Pokémon
+ * @property heldItem The item held by the Pokémon
+ * @property ability The ability of the Pokémon
  */
 data class ImmutablePokemon(
     val name: String,
@@ -54,7 +54,7 @@ data class ImmutablePokemon(
      * Returns a new ImmutablePokemon with changed types.
      * 
      * @param newTypes The new types to set as temporary types
-     * @return A new ImmutablePokemon instance with updated type state
+     * @return A new ImmutablePokemon instance with an updated type state
      */
     fun changeType(newTypes: List<PokemonTypeValue>): ImmutablePokemon {
         return copy(typeState = typeState.copy(tempTypes = newTypes))
@@ -64,7 +64,7 @@ data class ImmutablePokemon(
      * Returns a new ImmutablePokemon with a status event applied.
      * 
      * @param statusEvent The status event to apply
-     * @return A new ImmutablePokemon instance with updated status state
+     * @return A new ImmutablePokemon instance with an updated status state
      */
     fun applyStatusEvent(statusEvent: StatusEvent): ImmutablePokemon {
         return copy(statusState = statusState.applyEvent(statusEvent))
@@ -74,7 +74,7 @@ data class ImmutablePokemon(
      * Returns a new ImmutablePokemon with a type event applied.
      * 
      * @param typeEvent The type event to apply
-     * @return A new ImmutablePokemon instance with updated type state
+     * @return A new ImmutablePokemon instance with an updated type state
      */
     fun applyTypeEvent(typeEvent: TypeEvent): ImmutablePokemon {
         return copy(typeState = typeState.applyEvent(typeEvent))
@@ -94,6 +94,7 @@ data class ImmutablePokemon(
      * 
      * @return A new ImmutablePokemon instance with Terastal deactivated
      */
+    @Suppress("unused")
     fun deactivateTerastal(): ImmutablePokemon {
         return copy(typeState = typeState.deactivateTerastal())
     }
@@ -101,7 +102,7 @@ data class ImmutablePokemon(
     /**
      * Returns a new ImmutablePokemon with all temporary effects reset (used when returning from battle).
      * 
-     * @return A new ImmutablePokemon instance with reset state
+     * @return A new ImmutablePokemon instance with a reset state
      */
     fun onReturn(): ImmutablePokemon {
         return copy(
@@ -111,7 +112,7 @@ data class ImmutablePokemon(
     }
 
     /**
-     * Gets the final speed stat of the Pokemon.
+     * Gets the final speed stat of the Pokémon.
      * 
      * @return The final calculated speed stat
      */
@@ -124,16 +125,16 @@ data class ImmutablePokemon(
     }
 
     /**
-     * Checks if the Pokemon is still alive.
+     * Checks if the Pokémon is still alive.
      * 
-     * @return true if the Pokemon is alive, false if fainted
+     * @return true if the Pokémon is alive, false if fainted
      */
     fun isAlive(): Boolean {
         return !hpState.isDead()
     }
 
     /**
-     * Gets the current HP of the Pokemon.
+     * Gets the current HP of the Pokémon.
      * 
      * @return The current HP value
      */
@@ -142,7 +143,7 @@ data class ImmutablePokemon(
     }
 
     /**
-     * Gets the maximum HP of the Pokemon.
+     * Gets the maximum HP of the Pokémon.
      * 
      * @return The maximum HP value
      */
@@ -221,10 +222,10 @@ data class ImmutablePokemon(
     }
 
     /**
-     * Calculates and applies damage to this Pokemon from an attack.
+     * Calculates and applies damage to this Pokémon from an attack.
      * 
      * @param input The damage event input containing move and attack information
-     * @return A pair of the new Pokemon state and the damage result
+     * @return A pair of the new Pokémon state and the damage result
      */
     fun calculateDamage(input: DamageEventInput): Pair<ImmutablePokemon, DamageEventResult> {
         val typeCompatibility = typeState.getTypeMatch(input.move.type)
