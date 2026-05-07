@@ -6,6 +6,7 @@ dependencies {
     implementation(libs.clikt)
     implementation(project(":Core"))
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.bundles.arrow)
     testImplementation(libs.kotlin.test)
 }
 

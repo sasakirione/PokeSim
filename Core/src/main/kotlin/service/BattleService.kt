@@ -2,48 +2,49 @@ package service
 
 import domain.entity.Field
 import domain.entity.Party
+import event.BattleEvent
 import event.Turn
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 
-/**
- * A service class to manage and execute Pokémon battles between two parties.
- *
- * @constructor Initialises the battle service with two parties of Pokémon, user action functions, and a logger.
- * @param party1
- * @param party2
- * @param logger Battle logger instance, which defaults to `DefaultBattleLogger`.
- */
 class BattleService(
     private val party1: Party,
     private val party2: Party,
     private val field: Field = Field(),
     private val logger: BattleLogger = DefaultBattleLogger()
 ) {
-    /**
-     * Starts the battle and continues until all Pokémon on one side faint, or there's no action.
-     */
     suspend fun startBattle() {
         logger.logWithNewLine("=== Battle Start ===")
-        party1.logStartBattle()
-        party2.logStartBattle()
+        logger.onEvent(BattleEvent.BattleStart)
 
-        // Check if any team is already defeated (empty team or all fainted)
-        if (party1.isTeamDefeated) {
-            party1.logNoPokemon()
-            party2.logWin()
+        var currentParty1 = party1
+        var currentParty2 = party2
+
+        currentParty1.logStartBattle()
+        currentParty2.logStartBattle()
+
+        if (currentParty1.isTeamDefeated) {
+            currentParty1.logNoPokemon()
+            currentParty2.logWin()
             return
         }
-        if (party2.isTeamDefeated) {
-            party2.logNoPokemon()
-            party1.logWin()
+        if (currentParty2.isTeamDefeated) {
+            currentParty2.logNoPokemon()
+            currentParty1.logWin()
             return
         }
 
         var turnCount = 1
         while (true) {
             logger.logWithNewLine("=== Turn $turnCount ===")
+            logger.onEvent(BattleEvent.TurnBegin(turnCount))
 
-            val step1 = Turn.TurnStart(party1, party2, field).processAsync()
+            val step1 = Turn.TurnStart(currentParty1, currentParty2, field).processAsync()
             if (step1 !is Turn.TurnStep1) {
+                if (step1 is Turn.TurnEnd) {
+                    currentParty1 = step1.party1
+                    currentParty2 = step1.party2
+                }
                 break
             }
 
@@ -51,19 +52,28 @@ class BattleService(
             logger.logWithNewLine("--- Turn Start ---")
             val finish = step2.process().process() as? Turn.TurnEnd
             logger.log("--- Turn End ---")
-            if (finish?.isFinish == true) {
-                announceBattleResult()
-                break
+
+            if (finish != null) {
+                currentParty1 = finish.party1
+                currentParty2 = finish.party2
+                if (finish.isFinish) {
+                    announceBattleResult(currentParty1, currentParty2)
+                    break
+                }
             }
 
             turnCount++
         }
     }
 
-    /**
-     * Announces the result of the battle.
-     */
-    private fun announceBattleResult() {
+    fun startBattleFlow(): Flow<BattleEvent> = channelFlow {
+        val channelLogger = ChannelBattleLogger(channel)
+        val flowParty1 = party1.withLogger(channelLogger)
+        val flowParty2 = party2.withLogger(channelLogger)
+        BattleService(flowParty1, flowParty2, field, channelLogger).startBattle()
+    }
+
+    private fun announceBattleResult(party1: Party, party2: Party) {
         logger.logWithNewLine("=== Battle End ===")
         if (party1.isTeamDefeated) {
             party2.logWin()
@@ -73,5 +83,4 @@ class BattleService(
     }
 }
 
-// For backward compatibility
 typealias BattleServiceTemp = BattleService

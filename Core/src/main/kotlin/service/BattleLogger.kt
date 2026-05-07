@@ -1,30 +1,19 @@
 package service
 
-/**
- * Interface for logging battle events.
- * This allows different UI implementations to handle battle output in their own way.
- */
-interface BattleLogger {
-    /**
-     * Log a message to the output.
-     * @param message The message to log
-     */
-    fun log(message: String)
+import event.BattleEvent
+import kotlinx.coroutines.channels.SendChannel
 
-    /**
-     * Log a message with a newline prefix to the output.
-     * @param message The message to log
-     */
-    fun logWithNewLine(message: String) {
-        log("\n$message")
-    }
+interface BattleLogger {
+    fun log(message: String)
+    fun logWithNewLine(message: String) = log("\n$message")
+    fun onEvent(event: BattleEvent) = Unit
 }
 
-/**
- * Default implementation of BattleLogger that uses println.
- */
 class DefaultBattleLogger : BattleLogger {
-    override fun log(message: String) {
-        println(message)
-    }
+    override fun log(message: String) = println(message)
+}
+
+class ChannelBattleLogger(private val channel: SendChannel<BattleEvent>) : BattleLogger {
+    override fun log(message: String) = Unit
+    override fun onEvent(event: BattleEvent) { channel.trySend(event) }
 }

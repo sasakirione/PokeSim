@@ -1,5 +1,7 @@
 package factory
 
+import arrow.core.Either
+import arrow.core.raise.either
 import domain.entity.*
 import domain.interfaces.PokemonDataSource
 import domain.value.*
@@ -43,20 +45,11 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
         val priority: Int = 0
     )
 
-    /**
-     * Creates an immutable Pokémon based on the given ID.
-     * Uses the configured data source to retrieve the Pokémon configuration.
-     *
-     * @param pokemonId The ID of the Pokémon to create.
-     * @return The created immutable Pokémon instance.
-     */
-    fun getImmutablePokemon(pokemonId: Int): ImmutablePokemon {
-        // Get the Pokémon configuration from the data source or use Alcremie as default
-        val config = dataSource.getPokemonConfig(pokemonId) ?: dataSource.getPokemonConfig(1)
-        ?: throw IllegalStateException("Default Pokémon (ID: 1) not found in data source")
-
-        // Create and return the immutable Pokémon from the configuration
-        return createImmutablePokemonFromConfig(config)
+    fun getImmutablePokemon(pokemonId: Int): Either<PokemonError, ImmutablePokemon> = either {
+        val config = dataSource.getPokemonConfig(pokemonId)
+            ?: dataSource.getPokemonConfig(1)
+            ?: raise(PokemonError.DefaultNotFound)
+        createImmutablePokemonFromConfig(config)
     }
 
     /**

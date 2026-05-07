@@ -1,53 +1,43 @@
 package factory
 
+import arrow.core.Either
 import domain.value.PokemonTypeValue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class PokemonFactoryImmutableTest {
 
+    private fun PokemonFactory.getOrFail(id: Int) = getImmutablePokemon(id)
+        .fold({ fail("Expected Right but got error: $it") }, { it })
+
     @Test
     fun `should create ImmutablePokemon from factory`() {
-        // Given
         val factory = PokemonFactory()
+        val pokemon = factory.getOrFail(1)
 
-        // When
-        val pokemon = factory.getImmutablePokemon(1) // Alcremie
-
-        // Then
         assertEquals("Alcremie", pokemon.name)
         assertEquals(50, pokemon.level)
         assertTrue(pokemon.isAlive())
         assertTrue(pokemon.currentHp() > 0u)
-        assertTrue(pokemon.maxHp() > 0u)
-        assertEquals(pokemon.currentHp(), pokemon.maxHp()) // Should start at full HP
+        assertEquals(pokemon.currentHp(), pokemon.maxHp())
     }
 
     @Test
     fun `should create ImmutablePokemon with correct type state`() {
-        // Given
         val factory = PokemonFactory()
+        val pokemon = factory.getOrFail(1)
 
-        // When
-        val pokemon = factory.getImmutablePokemon(1) // Alcremie
-
-        // Then
-        // Alcremie should be Fairy type
         assertEquals(listOf(PokemonTypeValue.FAIRLY), pokemon.typeState.originalTypes)
         assertEquals(listOf(PokemonTypeValue.FAIRLY), pokemon.typeState.effectiveTypes)
     }
 
     @Test
     fun `should create ImmutablePokemon with correct stats`() {
-        // Given
         val factory = PokemonFactory()
+        val pokemon = factory.getOrFail(1)
 
-        // When
-        val pokemon = factory.getImmutablePokemon(1) // Alcremie
-
-        // Then
-        // Verify that stats are calculated correctly
         assertTrue(pokemon.statusState.getRealH() > 0)
         assertTrue(pokemon.statusState.getRealA() > 0)
         assertTrue(pokemon.statusState.getRealB() > 0)
@@ -58,54 +48,48 @@ class PokemonFactoryImmutableTest {
 
     @Test
     fun `should create ImmutablePokemon with moves`() {
-        // Given
         val factory = PokemonFactory()
+        val pokemon = factory.getOrFail(1)
 
-        // When
-        val pokemon = factory.getImmutablePokemon(1) // Alcremie
-
-        // Then
         val moveListText = pokemon.getTextOfMoveList()
         assertTrue(moveListText.isNotEmpty())
-        assertTrue(moveListText.contains("1.")) // Should have at least one move
+        assertTrue(moveListText.contains("1."))
     }
 
     @Test
     fun `should create different ImmutablePokemon instances`() {
-        // Given
         val factory = PokemonFactory()
+        val pokemon1 = factory.getOrFail(1)
+        val pokemon2 = factory.getOrFail(1)
 
-        // When
-        val pokemon1 = factory.getImmutablePokemon(1)
-        val pokemon2 = factory.getImmutablePokemon(1)
-
-        // Then
-        // Should be different instances but with same properties
-        assertTrue(pokemon1 !== pokemon2) // Different instances
-        assertEquals(pokemon1.name, pokemon2.name) // Same properties
+        assertTrue(pokemon1 !== pokemon2)
+        assertEquals(pokemon1.name, pokemon2.name)
         assertEquals(pokemon1.level, pokemon2.level)
         assertEquals(pokemon1.currentHp(), pokemon2.currentHp())
     }
 
     @Test
     fun `should handle immutable operations correctly`() {
-        // Given
         val factory = PokemonFactory()
-        val originalPokemon = factory.getImmutablePokemon(1)
-
-        // When
+        val originalPokemon = factory.getOrFail(1)
         val damagedPokemon = originalPokemon.takeDamage(50u)
         val healedPokemon = damagedPokemon.heal(25u)
 
-        // Then
-        // Original should be unchanged
         assertEquals(originalPokemon.maxHp(), originalPokemon.currentHp())
-        
-        // Damaged should have less HP
         assertTrue(damagedPokemon.currentHp() < originalPokemon.currentHp())
-        
-        // Healed should have more HP than damaged but less than original
         assertTrue(healedPokemon.currentHp() > damagedPokemon.currentHp())
         assertTrue(healedPokemon.currentHp() < originalPokemon.currentHp())
+    }
+
+    @Test
+    fun `should return Left for missing default pokemon in empty data source`() {
+        val emptySource = object : domain.interfaces.PokemonDataSource {
+            override fun getPokemonConfig(pokemonId: Int, ev: domain.entity.PokemonStatusEvV3?) = null
+            override fun hasPokemon(pokemonId: Int) = false
+        }
+        val factory = PokemonFactory(emptySource)
+        val result = factory.getImmutablePokemon(999)
+        assertTrue(result is Either.Left)
+        assertEquals(PokemonError.DefaultNotFound, (result as Either.Left).value)
     }
 }
