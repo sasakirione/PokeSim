@@ -1,5 +1,6 @@
 package domain.entity
 
+import domain.value.BattleCondition
 import event.*
 import service.BattleLogger
 import type.User1stActionFunc
@@ -41,6 +42,9 @@ class Party(
         return updateCurrentPokemon(current)
     }
 
+    fun applyCondition(condition: BattleCondition): Party =
+        updateCurrentPokemon(pokemon.applyCondition(condition))
+
     fun switchToNextPokemon(): Pair<Boolean, Party> {
         for (i in (pokemonIndex + 1) until count) {
             if (pokemons[i].isAlive()) {
@@ -70,8 +74,38 @@ class Party(
         logPokemonStatus()
     }
 
-    fun onTurnEnd() {
-        pokemon.onTurnEnd()
+    fun onTurnEnd(): Party {
+        if (!pokemon.isAlive()) return this
+
+        val condBefore = pokemon.condition
+        val hpBefore = pokemon.currentHp()
+        val updatedPokemon = pokemon.onTurnEnd()
+        val hpAfter = updatedPokemon.currentHp()
+
+        var updatedParty = updateCurrentPokemon(updatedPokemon)
+
+        // Log condition damage (burn / poison)
+        if (hpBefore > hpAfter) {
+            val damage = (hpBefore - hpAfter).toInt()
+            logger.logWithNewLine("${name}'s ${updatedPokemon.name} took $damage damage from ${condBefore.displayName()}!")
+            logger.onEvent(BattleEvent.ConditionDamage(name, updatedPokemon.name, condBefore.displayName(), damage))
+        }
+
+        // Log condition cured (sleep wake-up, freeze thaw)
+        if (updatedPokemon.condition is BattleCondition.None && condBefore !is BattleCondition.None) {
+            val condName = condBefore.displayName()
+            logger.logWithNewLine("${name}'s ${updatedPokemon.name} was cured of $condName!")
+            logger.onEvent(BattleEvent.ConditionCured(name, updatedPokemon.name, condName))
+        }
+
+        // Handle end-of-turn faint from burn or poison
+        if (!updatedPokemon.isAlive()) {
+            updatedParty.logDead()
+            val (_, switchedParty) = updatedParty.switchToNextPokemon()
+            return switchedParty
+        }
+
+        return updatedParty
     }
 
     fun getAction(input: UserEvent): ActionEvent = pokemon.getAction(input)
@@ -114,5 +148,40 @@ class Party(
         logger.log("${name}'s ${pokemon.name} used $moveName!")
         logger.log("Damage dealt: $damageDealt")
         logger.onEvent(BattleEvent.AttackUsed(name, pokemon.name, moveName, damageDealt))
+    }
+
+    fun logMoveUsed(moveName: String) {
+        logger.log("${name}'s ${pokemon.name} used $moveName!")
+    }
+
+    fun logMoveMiss(moveName: String) {
+        logger.logWithNewLine("${name}'s ${pokemon.name}'s attack missed!")
+        logger.onEvent(BattleEvent.MoveMissed(name, pokemon.name, moveName))
+    }
+
+    fun logMoveFail(reason: String) {
+        logger.logWithNewLine("${name}'s ${pokemon.name} is $reason and cannot move!")
+        logger.onEvent(BattleEvent.MoveFailed(name, pokemon.name, reason))
+    }
+
+    fun logCriticalHit() {
+        logger.log("A critical hit!")
+        logger.onEvent(BattleEvent.CriticalHit(name, pokemon.name))
+    }
+
+    fun logStatChange(statName: String, stages: Int) {
+        val direction = if (stages > 0) "rose" else "fell"
+        val amount = when (kotlin.math.abs(stages)) {
+            1 -> ""
+            2 -> " sharply"
+            else -> " drastically"
+        }
+        logger.logWithNewLine("${name}'s ${pokemon.name}'s $statName$amount $direction!")
+        logger.onEvent(BattleEvent.StatChanged(name, pokemon.name, statName, stages))
+    }
+
+    fun logConditionApplied(conditionName: String) {
+        logger.logWithNewLine("${name}'s ${pokemon.name} is now $conditionName!")
+        logger.onEvent(BattleEvent.ConditionApplied(name, pokemon.name, conditionName))
     }
 }

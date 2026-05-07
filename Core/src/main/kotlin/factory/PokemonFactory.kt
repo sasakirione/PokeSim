@@ -5,6 +5,7 @@ import arrow.core.raise.either
 import domain.entity.*
 import domain.interfaces.PokemonDataSource
 import domain.value.*
+import domain.value.MoveEffect
 
 class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonDataSource()) {
     /**
@@ -42,7 +43,8 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
         val category: MoveCategory,
         val power: Int,
         val accuracy: Int,
-        val priority: Int = 0
+        val priority: Int = 0,
+        val effects: List<MoveEffect> = emptyList()
     )
 
     fun getImmutablePokemon(pokemonId: Int): Either<PokemonError, ImmutablePokemon> = either {
@@ -116,7 +118,8 @@ class PokemonFactory(private val dataSource: PokemonDataSource = DefaultPokemonD
                 moveConfig.category,
                 moveConfig.power,
                 moveConfig.accuracy,
-                moveConfig.priority
+                moveConfig.priority,
+                moveConfig.effects
             )
         }
         val pokemonMoves = PokemonMoveV3(moves)

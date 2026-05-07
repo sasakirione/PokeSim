@@ -56,7 +56,7 @@ class BattleService(
             if (finish != null) {
                 currentParty1 = finish.party1
                 currentParty2 = finish.party2
-                if (finish.isFinish) {
+                if (finish.isFinish || currentParty1.isTeamDefeated || currentParty2.isTeamDefeated) {
                     announceBattleResult(currentParty1, currentParty2)
                     break
                 }

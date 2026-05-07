@@ -78,6 +78,13 @@ sealed class ActionEvent : PokemonEvent() {
      * @param pokemonIndex The index of the Pokémon to switch to in the player's team.
      */
     class ActionEventPokemonChange(val pokemonIndex: Int) : ActionEvent()
+
+    /**
+     * Represents an action where the Pokémon cannot move due to a status condition.
+     *
+     * @param reason A short description of why the Pokémon cannot move (e.g. "paralyzed", "asleep").
+     */
+    class ActionEventMoveFail(val reason: String) : ActionEvent()
 }
 
 /**
@@ -93,7 +100,7 @@ class UserEventResult(val afterEventList: List<PokemonEvent>) : PokemonEvent()
  * @param move The move being used to deal with damage.
  * @param attackIndex The index of the attacking Pokémon.
  */
-class DamageEventInput(val move: Move, val attackIndex: Int) : PokemonEvent()
+class DamageEventInput(val move: Move, val attackIndex: Int, val isCritical: Boolean = false) : PokemonEvent()
 
 /**
  * Represents the result of damage calculation.

@@ -6,7 +6,8 @@ class Move(
     val category: MoveCategory,
     val power: Int,
     val accuracy: Int,
-    val priority: Int = 0
+    val priority: Int = 0,
+    val effects: List<MoveEffect> = emptyList()
 )
 
 enum class MoveCategory {

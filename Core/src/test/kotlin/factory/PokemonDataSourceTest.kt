@@ -71,7 +71,7 @@ class PokemonDataSourceTest {
         assertEquals(4, config.evs.spd)
 
         // Check moves
-        assertEquals(2, config.moves.size)
+        assertEquals(3, config.moves.size)
         assertEquals("Dazzling Gleam", config.moves[0].name)
         assertEquals(PokemonTypeValue.FAIRLY, config.moves[0].type)
         assertEquals(MoveCategory.SPECIAL, config.moves[0].category)
@@ -114,7 +114,7 @@ class PokemonDataSourceTest {
         assertEquals(252, config.evs.spd)
 
         // Check moves
-        assertEquals(2, config.moves.size)
+        assertEquals(3, config.moves.size)
         assertEquals("Shadow Ball", config.moves[0].name)
         assertEquals(PokemonTypeValue.GHOST, config.moves[0].type)
         assertEquals("Sludge Bomb", config.moves[1].name)
@@ -142,7 +142,7 @@ class PokemonDataSourceTest {
         assertEquals(90u, config.baseStats.spd)
 
         // Check moves
-        assertEquals(2, config.moves.size)
+        assertEquals(3, config.moves.size)
         assertEquals("Thunderbolt", config.moves[0].name)
         assertEquals(PokemonTypeValue.ELECTRIC, config.moves[0].type)
         assertEquals("Iron Tail", config.moves[1].name)

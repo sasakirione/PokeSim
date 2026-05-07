@@ -155,23 +155,33 @@ data class PokemonStatusState(
 
     /**
      * Calculates damage for an incoming attack.
+     * Critical hits ignore positive defense rank stages and apply a 1.5× multiplier.
      */
     fun calculateDamage(input: DamageEventInput, typeCompatibility: Double): Int {
+        val isCritical = input.isCritical
+
         val defenseStat = when (input.move.category) {
-            PHYSICAL -> getRealB(false)
-            SPECIAL -> getRealD(false)
+            PHYSICAL -> effectiveDefense(getRealB(isDirect = true), getRealB(isDirect = false), isCritical)
+            SPECIAL -> effectiveDefense(getRealD(isDirect = true), getRealD(isDirect = false), isCritical)
             STATUS -> return 0
         }
+
+        val critMultiplier = if (isCritical) 1.5 else 1.0
 
         return DamageCalculation.calculateDamage(
             attackStat = input.attackIndex,
             defenseStat = defenseStat,
             movePower = input.move.power,
-            level = level, // Use the level from the state
+            level = level,
             typeCompatibility = typeCompatibility,
-            randomFactor = DamageCalculation.generateRandomFactor()
+            randomFactor = DamageCalculation.generateRandomFactor(),
+            otherModifiers = critMultiplier
         )
     }
+
+    // Crits ignore positive defense boosts (pick the value that is worse for the defender).
+    private fun effectiveDefense(base: Int, modified: Int, isCritical: Boolean): Int =
+        if (isCritical) minOf(base, modified) else modified
 
     /**
      * Applies a status event and returns a new PokemonStatusState instance.
