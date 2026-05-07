@@ -44,7 +44,7 @@ object PriorityCalculation {
      * 
      * Actions are sorted by:
      * 1. Priority (higher priority goes first)
-     * 2. Speed (higher speed goes first for same priority)
+     * 2. Speed (higher speed goes first for the same priority)
      * 3. Random order for ties (not implemented in pure function)
      * 
      * @param actions List of battle actions to sort
@@ -101,12 +101,12 @@ object PriorityCalculation {
     }
 
     /**
-     * Checks if an action has higher priority than another.
+     * Checks if an action has a higher priority than another.
      * 
      * @param action1 First action
      * @param action2 Second action
      * @param specialEffects List of special effects that modify priorities
-     * @return True if action1 has higher priority than action2
+     * @return True if action1 has a higher priority than action2
      */
     fun hasHigherPriority(
         action1: BattleAction,
