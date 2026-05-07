@@ -9,7 +9,6 @@ import domain.calculation.DamageCalculation
 import event.DamageEventInput
 import event.StatusEvent
 import kotlin.math.floor
-import kotlin.math.max
 
 /**
  * Immutable status state representation for a Pokémon.
@@ -183,27 +182,11 @@ data class PokemonStatusState(
     private fun effectiveDefense(base: Int, modified: Int, isCritical: Boolean): Int =
         if (isCritical) minOf(base, modified) else modified
 
-    /**
-     * Applies a status event and returns a new PokemonStatusState instance.
-     */
     fun applyEvent(statusEvent: StatusEvent): PokemonStatusState {
-        val newCorrections = PokemonStatusCorrection(
-            a = statusCorrections.a,
-            b = statusCorrections.b,
-            c = statusCorrections.c,
-            d = statusCorrections.d,
-            s = statusCorrections.s
-        )
-
-        when (statusEvent) {
-            is StatusEvent.StatusEventUp -> {
-                newCorrections.updateCorrectionUp(statusEvent.step, statusEvent.statusType)
-            }
-            is StatusEvent.StatusEventDown -> {
-                newCorrections.updateCorrectionDown(statusEvent.step, statusEvent.statusType)
-            }
+        val newCorrections = when (statusEvent) {
+            is StatusEvent.StatusEventUp -> statusCorrections.up(statusEvent.statusType, statusEvent.step)
+            is StatusEvent.StatusEventDown -> statusCorrections.down(statusEvent.statusType, statusEvent.step)
         }
-
         return copy(statusCorrections = newCorrections)
     }
 

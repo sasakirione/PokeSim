@@ -9,8 +9,6 @@ import domain.calculation.DamageCalculation
 import event.DamageEventInput
 import event.StatusEvent
 import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -29,7 +27,7 @@ class PokemonStatusV3(
     val ev: PokemonStatusEvV3,
     val iv: PokemonFigureIvV3,
     val base: PokemonStatusBase,
-    val correction: PokemonStatusCorrection = PokemonStatusCorrection(),
+    var correction: PokemonStatusCorrection = PokemonStatusCorrection(),
     val nature: Nature = Nature.HARDY
 ) : PokemonStatus {
     /**
@@ -155,14 +153,14 @@ class PokemonStatusV3(
     }
 
     override fun execEvent(statusEvent: StatusEvent) {
-        when (statusEvent) {
-            is StatusEvent.StatusEventDown -> correction.updateCorrectionDown(statusEvent.step, statusEvent.statusType)
-            is StatusEvent.StatusEventUp -> correction.updateCorrectionUp(statusEvent.step, statusEvent.statusType)
+        correction = when (statusEvent) {
+            is StatusEvent.StatusEventDown -> correction.down(statusEvent.statusType, statusEvent.step)
+            is StatusEvent.StatusEventUp -> correction.up(statusEvent.statusType, statusEvent.step)
         }
     }
 
     override fun execReturn() {
-        correction.clear()
+        correction = PokemonStatusCorrection()
     }
 }
 
@@ -248,82 +246,23 @@ class PokemonStatusBase(val h: UInt, val a: UInt, val b: UInt, val c: UInt, val 
  * @param d Correction value for a Special Defense status type.
  * @param s Correction value for a Speed status type.
  */
-class PokemonStatusCorrection(var a: Int = 0, var b: Int = 0, var c: Int = 0, var d: Int = 0, var s: Int = 0) {
-    /**
-     * Increases the correction value for the specified status type by the given step.
-     * The correction value cannot exceed a maximum limit of 6.
-     *
-     * @param step The amount by which the correction value should be increased.
-     * @param statusType The type of status value to update (e.g. Attack, Defense, Speed, etc.).
-     */
-    fun updateCorrectionUp(step: Int, statusType: StatusType) {
-        when (statusType) {
-            H -> {}
-            A -> {
-                a = min(a + step, 6)
-            }
+data class PokemonStatusCorrection(val a: Int = 0, val b: Int = 0, val c: Int = 0, val d: Int = 0, val s: Int = 0) {
 
-            B -> {
-                b = min(b + step, 6)
-            }
-
-            C -> {
-                c = min(c + step, 6)
-            }
-
-            D -> {
-                d = min(d + step, 6)
-            }
-
-            S -> {
-                s = min(s + step, 6)
-            }
-        }
+    fun up(stat: StatusType, step: Int): PokemonStatusCorrection = when (stat) {
+        H -> this
+        A -> copy(a = (a + step).coerceAtMost(6))
+        B -> copy(b = (b + step).coerceAtMost(6))
+        C -> copy(c = (c + step).coerceAtMost(6))
+        D -> copy(d = (d + step).coerceAtMost(6))
+        S -> copy(s = (s + step).coerceAtMost(6))
     }
 
-    /**
-     * Decreases the correction value for the specified status type by the given step.
-     * The correction value cannot drop below the minimum limit of -6.
-     *
-     * @param step The amount by which the correction value should be decreased.
-     * @param statusType The type of status value to update (e.g. Attack, Defense, Speed, etc.).
-     */
-    fun updateCorrectionDown(step: Int, statusType: StatusType) {
-        when (statusType) {
-            H -> {}
-            A -> {
-                a = max(a - step, -6)
-            }
-
-            B -> {
-                b = max(b - step, -6)
-            }
-
-            C -> {
-                c = max(c - step, -6)
-            }
-
-            D -> {
-                d = max(d - step, -6)
-            }
-
-            S -> {
-                s = max(s - step, -6)
-            }
-        }
-    }
-
-
-    /**
-     * Resets all correction values (a, b, c, d, s) to their default state of 0.
-     * This method is typically used to clear any modifications made to the
-     * status correction values, restoring the original state.
-     */
-    fun clear() {
-        a = 0
-        b = 0
-        c = 0
-        d = 0
-        s = 0
+    fun down(stat: StatusType, step: Int): PokemonStatusCorrection = when (stat) {
+        H -> this
+        A -> copy(a = (a - step).coerceAtLeast(-6))
+        B -> copy(b = (b - step).coerceAtLeast(-6))
+        C -> copy(c = (c - step).coerceAtLeast(-6))
+        D -> copy(d = (d - step).coerceAtLeast(-6))
+        S -> copy(s = (s - step).coerceAtLeast(-6))
     }
 }
