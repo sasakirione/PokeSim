@@ -64,8 +64,7 @@ data class ImmutablePokemon(
     fun getAction(input: UserEvent): ActionEvent {
         when (input) {
             is UserEvent.UserEventMoveSelect -> {
-                // Check status conditions that prevent movement
-                val failReason = cannotMoveReason()
+                val failReason = condition.cannotMoveReason()
                 if (failReason != null) return ActionEvent.ActionEventMoveFail(failReason)
 
                 val move = pokemonMove.getMove(input.moveIndex)
@@ -95,14 +94,6 @@ data class ImmutablePokemon(
 
             else -> throw IllegalArgumentException("Unsupported user event: ${input::class.simpleName}")
         }
-    }
-
-    // Returns null if pokemon can move, or a reason string if it cannot.
-    private fun cannotMoveReason(): String? = when (val cond = condition) {
-        is BattleCondition.Sleep -> if (cond.turnsLeft > 0) "fast asleep" else null
-        is BattleCondition.Freeze -> "frozen solid"
-        is BattleCondition.Paralysis -> if ((1..4).random() == 1) "fully paralyzed" else null
-        else -> null
     }
 
     fun calculateDamage(input: DamageEventInput): Pair<ImmutablePokemon, DamageEventResult> {
