@@ -165,16 +165,15 @@ data class PokemonStatusState(
             STATUS -> return 0
         }
 
-        val critMultiplier = if (isCritical) 1.5 else 1.0
-
         return DamageCalculation.calculateDamage(
-            attackStat = input.attackIndex,
+            attackStat = input.attackStat,
             defenseStat = defenseStat,
             movePower = input.move.power,
-            level = level,
+            level = input.attackerLevel,
             typeCompatibility = typeCompatibility,
+            stab = input.stab,
             randomFactor = DamageCalculation.generateRandomFactor(),
-            otherModifiers = critMultiplier
+            otherModifiers = if (isCritical) 1.5 else 1.0
         )
     }
 

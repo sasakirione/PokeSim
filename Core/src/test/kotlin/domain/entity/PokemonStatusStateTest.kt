@@ -167,7 +167,7 @@ class PokemonStatusStateTest {
         // Given
         val statusState = createTestStatusState()
         val move = Move(name = "Test Move", type = PokemonTypeValue.NORMAL, category = PHYSICAL, power = 80, accuracy = 100, priority = 0)
-        val damageInput = DamageEventInput(move = move, attackIndex = 100)
+        val damageInput = DamageEventInput(move = move, attackStat = 100)
         val typeCompatibility = 1.0
 
         // When

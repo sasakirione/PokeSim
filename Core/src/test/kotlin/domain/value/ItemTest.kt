@@ -63,7 +63,7 @@ class ItemTest {
 
         // Test that NoItem doesn't modify damage
         val move = Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-        val damageInput = DamageEventInput(move, 100)
+        val damageInput = DamageEventInput(move, attackStat = 100)
         assertEquals(damageInput, pokemon.heldItem.modifyOutgoingDamage(pokemon, damageInput))
         assertEquals(damageInput, pokemon.heldItem.modifyIncomingDamage(pokemon, damageInput))
 
@@ -101,15 +101,15 @@ class ItemTest {
 
         // Test that Charcoal boosts Fire-type moves by 20%
         val fireMove = Move("Fire Blast", PokemonTypeValue.FIRE, MoveCategory.SPECIAL, 120, 85, 0)
-        val fireDamageInput = DamageEventInput(fireMove, 100)
+        val fireDamageInput = DamageEventInput(fireMove, attackStat = 100)
         val boostedFireDamage = pokemon.heldItem.modifyOutgoingDamage(pokemon, fireDamageInput)
-        assertEquals(120, boostedFireDamage.attackIndex) // 100 * 1.2 = 120
+        assertEquals(120, boostedFireDamage.attackStat) // 100 * 1.2 = 120
 
         // Test that Charcoal doesn't affect non-Fire moves
         val waterMove = Move("Hydro Pump", PokemonTypeValue.WATER, MoveCategory.SPECIAL, 110, 80, 0)
-        val waterDamageInput = DamageEventInput(waterMove, 100)
+        val waterDamageInput = DamageEventInput(waterMove, attackStat = 100)
         val unboostedWaterDamage = pokemon.heldItem.modifyOutgoingDamage(pokemon, waterDamageInput)
-        assertEquals(100, unboostedWaterDamage.attackIndex) // Unchanged
+        assertEquals(100, unboostedWaterDamage.attackStat) // Unchanged
     }
 
     @Test
@@ -134,8 +134,8 @@ class ItemTest {
         assertTrue(customTypeItem.description.contains("dragon"))
 
         val dragonMove = Move("Dragon Pulse", PokemonTypeValue.DRAGON, MoveCategory.SPECIAL, 85, 100, 0)
-        val dragonDamageInput = DamageEventInput(dragonMove, 100)
+        val dragonDamageInput = DamageEventInput(dragonMove, attackStat = 100)
         val boostedDragonDamage = customTypeItem.modifyOutgoingDamage(createTestPokemon(), dragonDamageInput)
-        assertEquals(120, boostedDragonDamage.attackIndex) // 100 * 1.2 = 120
+        assertEquals(120, boostedDragonDamage.attackStat) // 100 * 1.2 = 120
     }
 }

@@ -318,17 +318,17 @@ class PokemonStatusV3Test {
         )
 
         // Test damage calculation with PHYSICAL move
-        val physicalDamageInput = DamageEventInput(physicalMove, 120)
+        val physicalDamageInput = DamageEventInput(physicalMove, attackStat = 120)
         val physicalDamage = status.calculateDamage(physicalDamageInput, 1.0)
         assertTrue(physicalDamage > 0)
 
         // Test damage calculation with a SPECIAL move
-        val specialDamageInput = DamageEventInput(specialMove, 60)
+        val specialDamageInput = DamageEventInput(specialMove, attackStat = 60)
         val specialDamage = status.calculateDamage(specialDamageInput, 1.0)
         assertTrue(specialDamage > 0)
 
         // Test damage calculation with STATUS move (should be 0)
-        val statusDamageInput = DamageEventInput(statusMove, 0)
+        val statusDamageInput = DamageEventInput(statusMove, attackStat = 0)
         val statusDamage = status.calculateDamage(statusDamageInput, 1.0)
         assertEquals(0, statusDamage)
 

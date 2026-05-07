@@ -107,14 +107,8 @@ class TypeBoostAbility(
     private val boostPercentage: Int
 ) : Ability {
     override fun modifyOutgoingDamage(pokemon: ImmutablePokemon, damageEventInput: DamageEventInput): DamageEventInput {
-        if (damageEventInput.move.type == moveType) {
-            // Create a new instance with the modified attackIndex
-            return DamageEventInput(
-                damageEventInput.move,
-                (damageEventInput.attackIndex * (100 + boostPercentage) / 100)
-            )
-        }
-        return damageEventInput
+        if (damageEventInput.move.type != moveType) return damageEventInput
+        return damageEventInput.copy(attackStat = damageEventInput.attackStat * (100 + boostPercentage) / 100)
     }
 }
 

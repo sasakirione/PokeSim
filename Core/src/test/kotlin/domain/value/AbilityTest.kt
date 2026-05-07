@@ -34,12 +34,12 @@ class AbilityTest {
 
         // Create a fire move with 100 attack indexes
         val fireMove = Move("Flamethrower", PokemonTypeValue.FIRE, MoveCategory.SPECIAL, 90, 100, 0)
-        val damageInput = DamageEventInput(fireMove, 100)
+        val damageInput = DamageEventInput(fireMove, attackStat = 100)
 
         // With 50% boost, attack index should be 150
         val boostedDamage = blaze.modifyOutgoingDamage(pokemon, damageInput)
 
-        assertEquals(150, boostedDamage.attackIndex)
+        assertEquals(150, boostedDamage.attackStat)
     }
 
     @Test
@@ -52,12 +52,12 @@ class AbilityTest {
 
         // Create a water move with 100 attack indexes
         val waterMove = Move("Water Gun", PokemonTypeValue.WATER, MoveCategory.SPECIAL, 40, 100, 0)
-        val damageInput = DamageEventInput(waterMove, 100)
+        val damageInput = DamageEventInput(waterMove, attackStat = 100)
 
         // Should not boost non-fire moves
         val boostedDamage = blaze.modifyOutgoingDamage(pokemon, damageInput)
 
-        assertEquals(100, boostedDamage.attackIndex)
+        assertEquals(100, boostedDamage.attackStat)
     }
 
     @Test
@@ -67,12 +67,12 @@ class AbilityTest {
 
         // Create a move with 100 attack indexes
         val move = Move("Tackle", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 40, 100, 0)
-        val damageInput = DamageEventInput(move, 100)
+        val damageInput = DamageEventInput(move, attackStat = 100)
 
         // NoAbility should not modify damage
         val result = NoAbility.modifyOutgoingDamage(pokemon, damageInput)
 
-        assertEquals(100, result.attackIndex)
+        assertEquals(100, result.attackStat)
 
         // NoAbility should not modify stats
         val speed = NoAbility.modifyStat(pokemon, StatType.SPEED, 100)

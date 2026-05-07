@@ -137,7 +137,7 @@ sealed class Turn {
             // Critical hit: 1/24 chance in Gen 6+
             val isCritical = (1..24).random() == 1
 
-            val damageInput = DamageEventInput(move, attackerAction.attackIndex, isCritical)
+            val damageInput = attackerAction.damageInput.copy(isCritical = isCritical)
             val (newDefenderPokemon, result) = defender.party.pokemon.calculateDamage(damageInput)
 
             val newDefenderParty = defender.party.updateCurrentPokemon(newDefenderPokemon)

@@ -74,22 +74,19 @@ data class ImmutablePokemon(
                 }
 
                 // Burn halves physical attack damage
-                val attackStat = statusState.moveAttack(move.category)
+                val baseStat = statusState.moveAttack(move.category)
                 val effectiveAttack = if (condition is BattleCondition.Burn && move.category == MoveCategory.PHYSICAL) {
-                    attackStat / 2
+                    baseStat / 2
                 } else {
-                    attackStat
+                    baseStat
                 }
+                val stab = typeState.getMoveMagnification(move.type)
 
-                val damage1 = kotlin.math.floor(level * 0.4 + 2)
-                val damage2 = kotlin.math.floor(damage1 * move.power * effectiveAttack)
-                val attackIndex = fiveOutOverFiveIn(damage2 * typeState.getMoveMagnification(move.type))
+                var damageInput = DamageEventInput(move, effectiveAttack, level, stab)
+                damageInput = heldItem.modifyOutgoingDamage(this, damageInput)
+                damageInput = ability.modifyOutgoingDamage(this, damageInput)
 
-                var damageEventInput = DamageEventInput(move, attackIndex)
-                damageEventInput = heldItem.modifyOutgoingDamage(this, damageEventInput)
-                damageEventInput = ability.modifyOutgoingDamage(this, damageEventInput)
-
-                return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, damageEventInput.attackIndex)
+                return ActionEvent.ActionEventMove.ActionEventMoveDamage(move, damageInput)
             }
 
             is UserEvent.UserEventPokemonChange -> {
@@ -150,8 +147,4 @@ data class ImmutablePokemon(
         }
     }
 
-    private fun fiveOutOverFiveIn(i: Double): Int {
-        val fraction = i - i.toInt()
-        return if (fraction == 0.5) i.toInt() else kotlin.math.round(i).toInt()
-    }
 }

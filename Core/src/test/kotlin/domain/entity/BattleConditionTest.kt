@@ -120,8 +120,8 @@ class BattleConditionTest {
     fun `critical hit applies 1_5x damage multiplier`() {
         val defender = makePokemon()
         val move = Move("Test", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 80, 100)
-        val normalInput = DamageEventInput(move, 100, isCritical = false)
-        val critInput = DamageEventInput(move, 100, isCritical = true)
+        val normalInput = DamageEventInput(move, attackStat = 100, isCritical = false)
+        val critInput = DamageEventInput(move, attackStat = 100, isCritical = true)
         val (_, normalResult) = defender.calculateDamage(normalInput)
         val (_, critResult) = defender.calculateDamage(critInput)
         assertTrue(critResult.damage > normalResult.damage,

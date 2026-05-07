@@ -64,9 +64,9 @@ sealed class ActionEvent : PokemonEvent() {
          * Represents a move action that deals damage.
          *
          * @param move The damage-dealing move being used.
-         * @param attackIndex The index of the attacking Pokémon.
+         * @param damageInput Pre-computed damage parameters (attack stat, level, STAB, etc.).
          */
-        class ActionEventMoveDamage(move: Move, val attackIndex: Int) : ActionEventMove(move)
+        class ActionEventMoveDamage(move: Move, val damageInput: DamageEventInput) : ActionEventMove(move)
     }
 
     /**
@@ -95,12 +95,21 @@ sealed class ActionEvent : PokemonEvent() {
 class UserEventResult(val afterEventList: List<PokemonEvent>) : PokemonEvent()
 
 /**
- * Represents input data for damage calculation.
+ * Represents input data for damage calculation from the attacker's perspective.
  *
- * @param move The move being used to deal with damage.
- * @param attackIndex The index of the attacking Pokémon.
+ * @param move The move being used.
+ * @param attackStat The effective attack stat (rank-corrected, burn-halved if applicable).
+ * @param attackerLevel The level of the attacking Pokémon.
+ * @param stab The STAB multiplier (1.0, 1.5, or 2.0).
+ * @param isCritical Whether this attack is a critical hit.
  */
-class DamageEventInput(val move: Move, val attackIndex: Int, val isCritical: Boolean = false) : PokemonEvent()
+data class DamageEventInput(
+    val move: Move,
+    val attackStat: Int,
+    val attackerLevel: Int = 50,
+    val stab: Double = 1.0,
+    val isCritical: Boolean = false
+) : PokemonEvent()
 
 /**
  * Represents the result of damage calculation.

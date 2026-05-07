@@ -143,11 +143,12 @@ class PokemonStatusV3(
         }
 
         return DamageCalculation.calculateDamage(
-            attackStat = input.attackIndex,
+            attackStat = input.attackStat,
             defenseStat = defenseStat,
             movePower = input.move.power,
-            level = 50, // Default level, could be parameterized
+            level = input.attackerLevel,
             typeCompatibility = typeCompatibility,
+            stab = input.stab,
             randomFactor = DamageCalculation.generateRandomFactor()
         )
     }

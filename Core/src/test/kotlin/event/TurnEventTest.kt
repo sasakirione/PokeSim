@@ -8,6 +8,7 @@ import domain.value.MoveCategory
 import domain.value.PokemonTypeValue
 import domain.value.Nature
 import kotlinx.coroutines.CompletableDeferred
+import event.DamageEventInput
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -129,8 +130,8 @@ class TurnEventTest {
     fun testTurnMoveTurnStep1stMoveProcessWithPlayer1Faster() {
         // Arrange
         val move = Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
-        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
+        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
+        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
 
         val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, player2Action, true, field)
 
@@ -147,8 +148,8 @@ class TurnEventTest {
     fun testTurnMoveTurnStep1stMoveProcessWithPlayer2Faster() {
         // Arrange
         val move = Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
-        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
+        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
+        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
 
         val turnStep1stMove = Turn.TurnMove.TurnStep1stMove(player1Action, player2Action, false, field)
 
@@ -165,8 +166,8 @@ class TurnEventTest {
     fun testTurnMoveTurnStep1stMoveProcessWithFaintedPokemon() {
         // Arrange
         val move = Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
-        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
+        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
+        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
 
         // Create a Pokémon with 0 HP to simulate a fainted Pokémon
         val faintedPokemon = createTestPokemon("FaintedPokemon").takeDamage(1000u) // Take enough damage to faint
@@ -186,8 +187,8 @@ class TurnEventTest {
     fun testTurnMoveTurnStep2ndMoveProcess() {
         // Arrange
         val move = Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
-        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
+        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
+        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
 
         val turnStep2ndMove = Turn.TurnMove.TurnStep2ndMove(player1Action, player2Action, true, field)
 
@@ -203,8 +204,8 @@ class TurnEventTest {
     fun testTurnMoveTurnStep2ndMoveSkipProcess() {
         // Arrange
         val move = Move("Test Move", PokemonTypeValue.NORMAL, MoveCategory.PHYSICAL, 50, 100, 0)
-        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
-        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, 0))
+        val player1Action = TurnAction(party1, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
+        val player2Action = TurnAction(party2, ActionEvent.ActionEventMove.ActionEventMoveDamage(move, DamageEventInput(move, attackStat = 0)))
 
         val turnStep2ndMoveSkip = Turn.TurnMove.TurnStep2ndMoveSkip(player1Action, player2Action, field)
 
