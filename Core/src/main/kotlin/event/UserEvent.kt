@@ -83,8 +83,9 @@ sealed class ActionEvent : PokemonEvent() {
      * Represents an action where the Pokémon cannot move due to a status condition.
      *
      * @param reason A short description of why the Pokémon cannot move (e.g. "paralyzed", "asleep").
+     * @param intendedMove The move the Pokémon attempted to use (used for priority ordering).
      */
-    class ActionEventMoveFail(val reason: String) : ActionEvent()
+    class ActionEventMoveFail(val reason: String, val intendedMove: Move) : ActionEvent()
 }
 
 /**

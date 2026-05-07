@@ -70,11 +70,11 @@ sealed class Turn {
             return TurnMove.TurnStep1stMove(player1, player2, isPlayer1First, field)
         }
 
-        // A failed move is treated as a priority-0 move for ordering purposes.
         private fun toBattleAction(party: Party, action: ActionEvent): BattleAction = when (action) {
             is ActionEvent.ActionEventMove -> BattleAction.MoveAction(party.pokemon, action.move)
             is ActionEvent.ActionEventPokemonChange -> BattleAction.SwitchAction(party.pokemon, action.pokemonIndex)
-            is ActionEvent.ActionEventMoveFail -> BattleAction.MoveAction(party.pokemon, DUMMY_MOVE)
+            // Use the intended move's priority so paralysis/sleep doesn't alter turn order.
+            is ActionEvent.ActionEventMoveFail -> BattleAction.MoveAction(party.pokemon, action.intendedMove)
         }
 
         private fun createPriorityContext(battleActions: List<BattleAction>): PriorityContext {
@@ -92,9 +92,6 @@ sealed class Turn {
             )
         }
 
-        companion object {
-            private val DUMMY_MOVE = Move("(fail)", PokemonTypeValue.NORMAL, MoveCategory.STATUS, 0, 0)
-        }
     }
 
     sealed class TurnMove : Turn() {

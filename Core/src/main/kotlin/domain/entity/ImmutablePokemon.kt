@@ -64,10 +64,9 @@ data class ImmutablePokemon(
     fun getAction(input: UserEvent): ActionEvent {
         when (input) {
             is UserEvent.UserEventMoveSelect -> {
-                val failReason = condition.cannotMoveReason()
-                if (failReason != null) return ActionEvent.ActionEventMoveFail(failReason)
-
                 val move = pokemonMove.getMove(input.moveIndex)
+                val failReason = condition.cannotMoveReason()
+                if (failReason != null) return ActionEvent.ActionEventMoveFail(failReason, move)
                 if (move.category == MoveCategory.STATUS) {
                     return ActionEvent.ActionEventMove.ActionEventMoveStatus(move)
                 }
